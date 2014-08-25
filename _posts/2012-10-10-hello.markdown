@@ -1,0 +1,52 @@
+---
+layout: post
+title: "Hello, world!"
+date: 2012-10-10 16:10
+comments: true
+categories: [thoughts]
+---
+
+This is my first post.
+It is always hard to begin something, but I'll try.
+
+<!-- more -->
+
+### Why?
+
+I had blog earlier on [LiveJournal](http://mishadoff.livejournal.com), it was basically in Ukrainian, my native language.
+But more time I was working on something, less time I had to write something.
+Honestly, it even was not programming specific blog, just random thoughts, xposts, pictures, etc.
+You know this shit. Also, it was very hard to maintain some posts, especially about programming, and I gave up.
+Excellent proof is my failed attempt to share and explain Clojure solutions on [Project Euler](http://projecteuler.net).
+Everything can be a reason: lack of readers, lack of feedback, not interesting topic, very specific topic,
+bad writing style, terrible livejournal layout and so on. Probably, these are all my excuses or maybe I just lazy.
+
+Now I've got something in my mind and have passion to share it.
+No matter if somebody like it or not.
+I really believe that if you share something for this world,
+sooner or later somebody point you on your mistakes. And it's a win.
+You got knowledge that didn't know earlier and can share it to someone else. Simple loop.
+
+### What?
+
+I plan to be specific in this blog, so a big part will be about programming, especially Java and Clojure.
+I also love puzzles and stupid self-made pictures (O_o) and they have reserved place in my blog.
+Time to time can appear posts with reference to some clever people, if they have clever thoughts, of course.
+Event reports, some critic, books, movies, music, games, humour.
+Only God knows what else can appear in my mind and therefore in this blog, but I'll try to be specific as much as possible.
+Really.
+
+### English?
+
+As you already understand I'm not native English speaker or writer or whatever. How many mistakes did you count?
+
+I need some effort even for writing simple sentence in English (*Kiev is the capital of Ukraine - not this one*).
+And no matter how long I check my grammar or spelling I will have some mistakes. Big deal.
+Improve English is one of my goals, so it's ok. *adding english in todo list*
+
+I also don't exclude option, that some posts will be in Ukrainian or even in Russian.
+
+### What else?
+
+I spent half an hour writing this first post and believe that in near future I have more structured thoughts than this bag of words above.
+Good luck and welcome to my blog!
