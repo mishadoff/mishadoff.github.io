@@ -43,11 +43,13 @@ a.pdf:before {
 h1,h2,h3,h4 { 
 	line-height:1em; 
 	font-size:1.5em; 
-	font-weight: normal; 
 	clear: left; 	
 	font-family: Vollkorn;
+	margin-bottom: 1em;
 }
-h1 { margin-bottom: 1em; }
+h1 { 
+     font-size: 200%;
+}
 h2 {
 	font-size: 100%;
 	line-height: 1.5em;
@@ -358,7 +360,7 @@ pre:hover {
 }
 code {
 	font-size: 1em;
-	background-color: #f7f7ff;
+	background-color: #eeeeee;
 	line-height: 1.4em;
 }
 pre > code {
