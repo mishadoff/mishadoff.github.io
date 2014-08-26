@@ -1,10 +1,6 @@
 ---
 layout: page
-title: Hello World!
-tagline: Supporting tagline
 ---
-
-Recent posts:
 
 <ul class="posts">
   {% for post in site.posts limit:10 %}

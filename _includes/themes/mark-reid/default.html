@@ -26,6 +26,9 @@
    <!-- Homepage CSS -->
    <link rel="stylesheet" href="{{ ASSET_PATH }}/css/screen.css" type="text/css" />
 
+   <!-- Font -->
+   <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Vollkorn">
+   <link rel="icon" type="image/png" href="/favicon.png" />
 </head>
 <body id="{{ page.section }}">
 <div id="site">
@@ -33,14 +36,11 @@
   <div id="header">
     <h1>
     	<a href="{{ HOME_PATH }}" title="{{ site.title }}">{{ site.title }}</a>
-    	<span class="byline">&larr; <a href="{{ HOME_PATH }}">{{ site.author.name }}</a></span>
     </h1>
     <ul class="nav">
-      <li><a class="home" href="{{ HOME_PATH }}">Home</a></li>
-      <li><a  href="/archive.html">Archive</a></li>
-      <li><a  href="/pages.html">Pages</a></li>
-      <li><a  href="/categories.html">Categories</a></li>
-      <li><a  href="/tags.html">Tags</a></li>
+      <li><a href="/archive/">Archive</a></li>
+      <li><a href="/categories/">Categories</a></li>
+      <li><a href="/about/">About</a></li>
     </ul>
   </div>
 
@@ -49,13 +49,11 @@
   <div id="footer">
   	<address>
   		<span class="copyright">
-  			Content by <a href="/info/site.html">{{ site.author.name }}</a>. Design by 
+  			Content by <a href="/about/">{{ site.author.name }}</a>. Design by 
   			<a href="http://mark.reid.name/">Mark Reid</a>
-  			<br/>
-  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
   		</span>
   		<span class="engine">
-  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static site generator">Jekyll</a>
   		</span>
   	</address>
   </div>

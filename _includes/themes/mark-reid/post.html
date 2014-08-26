@@ -2,8 +2,8 @@
 	
   <h1 class="emphnext">{{ page.title }}</h1>
   <ul class="tag_box inline">
-  {% assign tags_list = page.tags %}
-  {% include JB/tags_list %}
+    {% assign categories_list = page.categories %}  
+    {% include JB/categories_list %}
   </ul>
 
   {{ content }}
