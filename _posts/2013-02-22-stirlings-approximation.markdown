@@ -40,7 +40,7 @@ $$
 ln(1 \cdot 2 \cdot 3 ...) = ln(1) + ln(2) + ln(3) + ... + ln(n)
 $$
 
-Take a look at the integral $\int_a^b f(x) dx$.
+Take a look at the integral $\int_a^b f(x) dx$
 Replace $f(x)$ with $ln(x)$, $a$ with $1$, and $b$ with $n$. Then use numerical
 integration with step `1` and [right rectangle rule](http://en.wikipedia.org/wiki/Rectangle_method)
 

@@ -22,7 +22,7 @@ public class Hello {
 
 Compile it by `javac Hello.java`, and open `Hello.class` with hex-editor (`M-x hexl-mode` for emacs)
 
-![](/images/posts/cafebabe.png "cafebabe")
+![](http://i.imgur.com/VztJknQ.png)
 
 James Gosling [explained](http://radio-weblogs.com/0100490/2003/01/28.html) this:
 
