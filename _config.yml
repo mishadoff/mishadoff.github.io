@@ -23,6 +23,9 @@ author :
   twitter : mishadoff
   feedburner : mishadoff
 
+excerpt: true #
+excerpt_separator: "<!-- more -->"
+
 #rss_categories: ["clojure", "java", "digest"]
 
 # The production_url is only used when full-domain names are needed

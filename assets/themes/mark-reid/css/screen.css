@@ -34,8 +34,15 @@ img { -ms-interpolation-mode:bicubic; }
 html>body { font-size:16px; }
 p { margin: 0 0 1.5em 0; text-align: justify; }
 
-a { text-decoration: none; color: #339; }
-a:hover { text-decoration: underline; color: #33f; }
+a { 
+  text-decoration: none; 
+  color: #339; 
+  text-decoration: none;
+}
+a:hover { 
+  text-decoration: underline; 
+  color: #33f; 
+}
 a.pdf:before { 
 	margin-right: 1em;
 	content: url(/files/css/icon_pdf.gif); }
@@ -51,7 +58,7 @@ h1 {
      font-size: 200%;
 }
 h2 {
-	font-size: 100%;
+	font-size: 150%;
 	line-height: 1.5em;
 	margin:1.5em 0 1.5em 0;
 	font-weight:bold;
@@ -67,7 +74,7 @@ hr {
 sup { line-height: 1ex; }
 
 #site {
-	max-width: 46em;
+	max-width: 54em;
 	margin: 1.5em auto 3em auto;
 	line-height:1.5em;
 }
@@ -173,6 +180,14 @@ ul li {
 	list-style-type: square;
 	list-style-position: outside;
 }
+ul#nobullets {
+  padding:0; 
+  margin:0;
+}
+ul#nobullets li {
+  list-style-type: none;
+}
+
 ol li {
 	list-style-type: decimal;
 	list-style-position: inside;
@@ -206,14 +221,13 @@ ul.compact li a {
 	font-variant: small-caps;
 	line-height: 1em;
 	margin-top: .5em;
-	margin-bottom: 0;
+	margin-bottom: 10px;
 }
 #header h1 {
-	font-family: Palatino, georgia, "times new roman", serif;
+	font-family: Vollkorn; /* Palatino, georgia, "times new roman", serif; */
 	margin-bottom: 0;
 	line-height: 0.9em;
 	display: block;
-	font-weight: normal;
 }
 
 #header ul {
@@ -549,3 +563,6 @@ img.maruku-png { }
 	color:#FFF;
 }
 
+div#empty {
+    height: 2em;
+}

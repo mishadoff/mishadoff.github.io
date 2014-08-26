@@ -4,7 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
 <head>
    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-   <title>{{ page.title }} &larr; {{ page.top }}</title>
+   {% if page.header_title %}
+     <title>{{ page.header_title }}</title>
+   {% else %}
+     <title>{{ page.title }}</title>
+   {% endif %}
    <meta name="author" content="{{ site.author.name }}" />
 
    <link rel="start" href="{{ HOME_PATH }}" />

@@ -1,10 +1,19 @@
 ---
 layout: page
+header_title: mishadoff thoughts
 ---
 
-<ul class="posts">
+<div>
+<ul id="nobullets" class="posts">
   {% for post in site.posts limit:10 %}
-    <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
+      <li>
+        <h1>{{ post.title }}</h1>
+	  <p>
+	    {{ post.excerpt }}
+	  </p>
+	  <a href="{{ post.url | prepend: site.baseurl }}">Read on &rarr;</a>
+	  </li>
+	  <div id="empty"></div>
   {% endfor %}
 </ul>
-
+</div>
