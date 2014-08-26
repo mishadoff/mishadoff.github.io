@@ -135,11 +135,12 @@ sup { line-height: 1ex; }
 	line-height: 1.714em;
 }
 blockquote {
-	padding: 0 2.8em;
+	padding: 0 2.8em 0 1em;
 	margin: 1.714em 0;
 	color: #444;
 	font-size: 0.875em;
 	line-height: 1.714em;
+        border-left: 4px solid #DDD;
 }
 
 .note {
@@ -569,4 +570,15 @@ div#empty {
 
 .sharing {
     padding-top: 20px;
+}
+
+fieldset {
+  border: none;
+  float: left;
+}
+
+.search {
+  background-color: rgba(200,200,200,0.15);
+  border: 1px dotted #aaa;
+  width: 10em;
 }

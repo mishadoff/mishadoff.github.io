@@ -155,7 +155,7 @@ Ok, get `42`, but you forced to use one division `/`.
 
 Not so obvious?
 
-```
+``` clojure
 (solve-insert-ops-num [3 4 5 6] 42) =>
 ([42N "3+45-6"] [42N "3/4*56"] [42N "3*4+5*6"])
 ```

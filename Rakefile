@@ -51,6 +51,7 @@ task :post do
   slug = title.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
   begin
     date = (ENV['date'] ? Time.parse(ENV['date']) : Time.now).strftime('%Y-%m-%d')
+    datetime = (ENV['date'] ? Time.parse(ENV['date']) : Time.now).strftime('%Y-%m-%d %H:%M')
   rescue => e
     puts "Error - date format must be YYYY-MM-DD, please check you typed it correctly!"
     exit -1
@@ -65,11 +66,12 @@ task :post do
     post.puts "---"
     post.puts "layout: post"
     post.puts "title: \"#{title.gsub(/-/,' ')}\""
-    post.puts 'description: ""'
-    post.puts "category: #{category}"
-    post.puts "tags: #{tags}"
+    post.puts "date: #{datetime}"
+    post.puts "comments: true"
+    post.puts "categories: []"
+    post.puts "sharing: true"
+    post.puts "published: false"
     post.puts "---"
-    post.puts "{% include JB/setup %}"
   end
 end # task :post
 
