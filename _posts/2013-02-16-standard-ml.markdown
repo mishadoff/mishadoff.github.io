@@ -3,6 +3,7 @@ layout: post
 title: "Standard ML"
 date: 2013-02-16 13:33
 comments: true
+sharing: true
 categories: [programming, fp, sml, coursera]
 published: true
 ---

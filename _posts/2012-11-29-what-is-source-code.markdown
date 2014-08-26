@@ -3,6 +3,7 @@ layout: post
 title: "What is source code?"
 date: 2012-11-29 23:31
 comments: true
+sharing: true
 categories: [thoughts, git, fun]
 ---
 

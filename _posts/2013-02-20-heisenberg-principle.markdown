@@ -3,6 +3,7 @@ layout: post
 title: "Heisenberg Principle"
 date: 2013-02-21 00:24
 comments: true
+sharing: true
 categories: [thoughts]
 ---
 

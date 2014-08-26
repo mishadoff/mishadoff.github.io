@@ -566,3 +566,7 @@ img.maruku-png { }
 div#empty {
     height: 2em;
 }
+
+.sharing {
+    padding-top: 20px;
+}

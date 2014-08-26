@@ -3,6 +3,7 @@ layout: post
 title: "Clojure + Emacs + Leiningen + nREPL"
 date: 2012-10-13 18:19
 comments: true
+sharing: true
 categories: [clojure, emacs, lein, nrepl, ide]
 ---
 

@@ -4,6 +4,7 @@ title: "Effective Java"
 date: 2014-08-07 13:54
 comments: true
 categories: [java, programming, book]
+sharing: true
 published: true
 ---
 

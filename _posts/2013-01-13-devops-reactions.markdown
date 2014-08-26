@@ -3,6 +3,7 @@ layout: post
 title: "DevOps reactions"
 date: 2013-01-13 18:10
 comments: true
+sharing: true
 categories: [fun, pics]
 ---
 

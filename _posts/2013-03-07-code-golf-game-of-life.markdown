@@ -3,6 +3,7 @@ layout: post
 title: "Code Golf: Game of Life"
 date: 2013-03-07 17:59
 comments: true
+sharing: true
 categories: [programming, clojure, code golf]
 published: true
 ---

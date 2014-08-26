@@ -3,6 +3,7 @@ layout: post
 title: "Java Magic. Part 4: sun.misc.Unsafe"
 date: 2013-02-26 02:37
 comments: true
+sharing: true
 categories: [programming, java]
 published: true
 ---

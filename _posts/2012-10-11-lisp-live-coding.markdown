@@ -3,6 +3,7 @@ layout: post
 title: "Lisp live-coding"
 date: 2012-10-11 17:14
 comments: true
+sharing: true
 categories: [lisp, live-coding, programming, video]
 published: true
 ---

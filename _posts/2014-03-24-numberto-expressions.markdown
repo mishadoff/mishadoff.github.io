@@ -3,6 +3,7 @@ layout: post
 title: "Numberto: Expressions"
 date: 2014-03-29 00:25
 comments: true
+sharing: true
 categories: [clojure, programming]
 published: true
 ---

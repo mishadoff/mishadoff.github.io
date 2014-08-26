@@ -3,6 +3,7 @@ layout: post
 title: "Clojure Pitfalls: Part 1"
 date: 2014-05-22 01:48
 comments: true
+sharing: true
 categories: [programming, clojure]
 published: true
 ---

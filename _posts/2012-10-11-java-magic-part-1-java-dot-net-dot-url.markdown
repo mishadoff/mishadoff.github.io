@@ -3,6 +3,7 @@ layout: post
 title: "Java Magic. Part 1: java.net.URL"
 date: 2012-10-11 16:30
 comments: true
+sharing: true
 categories: [java, programming]
 published: true
 ---

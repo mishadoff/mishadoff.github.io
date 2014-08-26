@@ -3,6 +3,7 @@ layout: post
 title: "Learn Perl"
 date: 2012-11-12 20:38
 comments: true
+sharing: true
 categories: [coursera, book, perl, life, xkcd]
 ---
 

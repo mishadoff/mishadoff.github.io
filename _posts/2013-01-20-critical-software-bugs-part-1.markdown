@@ -3,6 +3,7 @@ layout: post
 title: "Critical Software Bugs: Part 1"
 date: 2013-01-20 18:48
 comments: true
+sharing: true
 categories: [programming, java, history, bug]
 published: true
 ---

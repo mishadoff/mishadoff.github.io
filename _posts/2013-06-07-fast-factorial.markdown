@@ -3,6 +3,7 @@ layout: post
 title: "Fast Factorial"
 date: 2013-06-07 01:08
 comments: true
+sharing: true
 categories: [algorithms, clojure]
 ---
 

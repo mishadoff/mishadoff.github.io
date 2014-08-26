@@ -3,6 +3,7 @@ layout: post
 title: "Ingress Tricks"
 date: 2012-12-11 12:00
 comments: true
+sharing: true
 categories: [ingress, fun, xkcd, games]
 ---
 

@@ -3,6 +3,7 @@ layout: post
 title: "Pigeon Cipher"
 date: 2012-11-24 14:52
 comments: true
+sharing: true
 categories: [news, cryptography]
 ---
 

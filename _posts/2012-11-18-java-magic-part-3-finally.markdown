@@ -3,6 +3,7 @@ layout: post
 title: "Java Magic. Part 3: Finally"
 date: 2012-11-18 19:39
 comments: true
+sharing: true
 categories: [java, programming]
 published: true
 ---

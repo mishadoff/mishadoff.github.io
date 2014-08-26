@@ -1,5 +1,6 @@
 ---
 layout: page
+sharing: false
 header_title: mishadoff thoughts
 ---
 

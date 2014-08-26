@@ -3,6 +3,7 @@ layout: post
 title: "Programming Digest 5"
 date: 2014-06-06 13:31
 comments: true
+sharing: true
 categories: [programming, digest]
 published: true
 ---

@@ -3,6 +3,7 @@ layout: post
 title: "Elephant-Oriented Programming"
 date: 2013-02-26 00:58
 comments: true
+sharing: true
 categories: [fun]
 published: true
 ---

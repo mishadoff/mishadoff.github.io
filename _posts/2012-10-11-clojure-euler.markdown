@@ -3,6 +3,7 @@ layout: post
 title: "Clojure Euler"
 date: 2012-10-11 16:51
 comments: true
+sharing: true
 categories: [clojure, programming, project-euler]
 published: true
 ---

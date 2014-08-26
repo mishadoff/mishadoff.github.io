@@ -3,6 +3,7 @@ layout: post
 title: "Data Analysis: Facebook Hacker Cup 2013"
 date: 2013-02-01 12:42
 comments: true
+sharing: true
 categories: [programming, statistics, data, clojure, selenium]
 published: true
 ---

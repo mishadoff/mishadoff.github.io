@@ -3,6 +3,7 @@ layout: post
 title: "Announcing numberto"
 date: 2013-09-01 04:23
 comments: true
+sharing: true
 categories: [clojure, programming]
 published: true
 ---

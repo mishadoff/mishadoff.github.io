@@ -3,6 +3,7 @@ layout: post
 title: "99 Clojure Problems"
 date: 2012-11-10 16:20
 comments: true
+sharing: true
 categories: [clojure, programming]
 published: false
 ---

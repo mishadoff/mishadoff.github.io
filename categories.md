@@ -3,6 +3,7 @@ layout: page
 title: Categories
 permalink: /categories/
 header: Posts By Category
+sharing: false
 group: navigation
 ---
 {% include JB/setup %}

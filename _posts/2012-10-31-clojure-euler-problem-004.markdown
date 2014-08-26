@@ -3,6 +3,7 @@ layout: post
 title: "Clojure Euler: Problem 004"
 date: 2012-10-31 19:30
 comments: true
+sharing: true
 categories: [clojure, programming, project-euler]
 published: true
 ---

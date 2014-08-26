@@ -3,6 +3,7 @@ layout: post
 title: "Hello, world!"
 date: 2012-10-10 16:10
 comments: true
+sharing: true
 categories: [thoughts]
 ---
 

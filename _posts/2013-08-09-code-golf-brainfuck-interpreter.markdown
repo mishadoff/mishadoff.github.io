@@ -3,6 +3,7 @@ layout: post
 title: "Code Golf: Brainfuck Interpreter"
 date: 2013-08-09 17:44
 comments: true
+sharing: true
 categories: [programming, clojure, code golf]
 published: true
 ---
