@@ -4,7 +4,7 @@ title: "Clojure Design Patterns"
 date: 2014-05-26 00:09
 comments: true
 categories: [clojure, programming, java, story, patterns]
-published: false
+published: true
 ---
 
 *Quick* overview of the classic [Design Patterns](http://en.wikipedia.org/wiki/Design_Patterns) in Clojure
@@ -48,16 +48,15 @@ All characters are fake, coincidences are accidental.*
 - Composite
 - Decorator
 - Proxy
+- Cast
 
-- [Cast](#cast)
-
-### <a id="intro"/>Intro
+### <div id="intro"/>Intro
 
 Two modest programmers **Pedro Veel** and **Eve Dopler**
 solving software engineering problems and
 applying design patterns.
 
-### <a id="command"/>Episode 1. Command
+### <div id="command"/>Episode 1. Command
 
 > Leading IT service provider **"Serpent Hill & R.E.E"**
 > acquired new project for USA customer.
@@ -161,7 +160,7 @@ new SomeInterfaceWithOneMethod() {
 *Pedro:* Hmm... Looks simple.  
 *Eve:* Definitely, **Command is just a function.**  
 
-### <a id="strategy"/>Episode 2. Strategy
+### <div id="strategy"/>Episode 2. Strategy
 
 > **Sven Tori** pays a lot of money
 > to see a page with list of users.
@@ -250,7 +249,7 @@ Collections.sort(users, new ReverseSubsComparator());
 *Pedro:* Very doubtful approach to pass strategy.  
 *Eve:* I don't care, **Strategy is just a function passed to another function.**  
 
-### <a id="state"/>Episode 3. State
+### <div id="state"/>Episode 3. State
 
 > Sales person **Karmen Git**
 > investigated the market and decided
@@ -373,7 +372,7 @@ the same way as strategy pattern. **It is just a first-class function**.
 *Pedro:* Not sure.  
 *Eve:* Well, it is topic for `Visitor` pattern.
 
-### <a id="visitor"/>Episode 4. Visitor
+### <div id="visitor"/>Episode 4. Visitor
 
 > **Natanius S. Selbys** suggested to implement functionality
 > allows users export their messages, activities and achievements
@@ -584,7 +583,7 @@ until you add a separate `::csv` function.
 you don't need Visitor pattern**?  
 *Eve:* Exactly.  
 
-### <a id="template_method"/>Episode 5. Template Method
+### <div id="template_method"/>Episode 5. Template Method
 
 > MMORPG **Mech Dominore Fight Saga** requested a game bot
 > for their VIP users. Not fair.
@@ -787,7 +786,7 @@ alias
 has no mana, so instead of trying to cast fireballs, he can just teleport and run away, you just provide new function.  
 *Pedro:* Makes sense. **Functions everywhere**.  
 
-### <a id="iterator"/>Episode 6. Iterator
+### <div id="iterator"/>Episode 6. Iterator
 
 > Technical consultant **Kent Podiololis**
 > complains for C-style loops usage.
@@ -991,7 +990,7 @@ obtain prototype.
 *Eve:* We will talk about Prototype in a minute, but just
 remember that `Memento` is not about *caretaker* and *originator*, it is about **save and restore**.  
 
-### <a id="prototype"/>Episode 8: Prototype
+### <div id="prototype"/>Episode 8: Prototype
 
 > **Dex Ringeus** detected that users feel uncomfortable
 > with registration form. Make it more usable.
@@ -1096,7 +1095,7 @@ time consuming operation.
 *Eve:* No, it is not. Go to Google and search for *persistent data structures* and *structural sharing*  
 *Pedro:* Thanks a lot.  
 
-### <a id="mediator"/>Episode 9: Mediator
+### <div id="mediator"/>Episode 9: Mediator
 
 > Recently performed external code review
 > shows a lot of issues with current codebase.
@@ -1210,7 +1209,7 @@ for *saving users* and *sending messages*
 
 *Pedro:* Good enough.
 
-### <a id="observer"/>Episode 10: Observer
+### <div id="observer"/>Episode 10: Observer
 
 > Independent security commision
 > detected hacker **Dartee Hebl** has over a billion
@@ -1356,7 +1355,7 @@ dynamically.
 *Eve:* First of all, our `add-money` function is clean, it just adds money. Also, watcher tracks *every* change to the state, not the ones we handle in mutator functions, like `add-money`
 *Pedro:* That's awesome!
 
-### <a id="interpreter"/>Episode 11: Interpreter
+### <div id="interpreter"/>Episode 11: Interpreter
 
 > **Bertie Prayc** stole important data from our server
 > and shared it via BitTorrent system.
@@ -1388,7 +1387,7 @@ todo
 
 ## TODO
 
-### <a id="flyweight"/>Episode 12: Flyweight
+### <div id="flyweight"/>Episode 12: Flyweight
 
 > Administrators of the lawyer firm **Cristopher, Matton & Pharts**
 > detected that reporting system consumes a lot of memory
@@ -1480,7 +1479,7 @@ return cached value.
 *Pedro:* That's awesome!  
 *Eve:* Of course, but remember if your function has side-effects, memoization is bad idea.  
 
-### <a id="builder"/>Episode 13: Builder
+### <div id="builder"/>Episode 13: Builder
 
 > **Tuck Brass** complains that his old automatic
 > coffee-making system is very slow in usage.
@@ -1488,11 +1487,11 @@ return cached value.
 
 *Pedro:* Need to understand what's the problem exactly?  
 *Eve:* I've researched, system is old, written in *COBOL* and built around expert system *question-answer*. They were very popular long time ago.  
-*Pedro:* What do you mean by *"question-answer"*
-*Eve:* There is operator in front of terminal. System asks: *"Do yo want to add water?"*, operator answers *"Yes"*. Then system asks again: *"Do you want to add coffee"*, operator answers *"Yes"* and so forth.
-*Pedro:* It's a nightmare, I just want coffee with milk. Why they don't use predefined options: coffee with milk, coffee with sugar and so on.
-*Eve:* Because it is the raisin of the system: customer can make coffee with any set of ingridients *by yourself* 
-*Pedro:* Okay, let's fix it with Builder pattern.
+*Pedro:* What do you mean by *"question-answer"*  
+*Eve:* There is operator in front of terminal. System asks: *"Do yo want to add water?"*, operator answers *"Yes"*. Then system asks again: *"Do you want to add coffee"*, operator answers *"Yes"* and so forth.  
+*Pedro:* It's a nightmare, I just want coffee with milk. Why they don't use predefined options: coffee with milk, coffee with sugar and so on.  
+*Eve:* Because it is the raisin of the system: customer can make coffee with any set of ingridients *by yourself*  
+*Pedro:* Okay, let's fix it with Builder pattern.  
 
 ``` java
 public class Coffee {
@@ -1578,18 +1577,60 @@ Coffee c = new Coffee.Builder()
         .make();
 ```
 
-*Pedro:* Calling to method `make` checks all required parameters, and could validate and throw an exception if object is in inconsistent state.
+*Pedro:* Calling to method `make` checks all required parameters, and could validate and throw an exception if object is in inconsistent state.  
 *Eve:* Awesome functionality, but why so verbose?
+*Pedro:* Beat it.
+*Eve:* A piece of cake, clojure supports optional parameters
 
 ``` clojure
+(defn make-coffee [name amount water
+                   & {:keys [milk sugar cinnamon]
+                      :or {milk 0 sugar 0 cinnamon 0}}]
+  ;; definition goes here
+  )
 
+(make-coffee "Royale Coffee" 15 100
+             :milk 10
+             :cinnamon 3)
+```
+
+*Pedro:* Aha, you have three required parameters and three optionals, but required parameters still without names.  
+*Eve:* What do you mean?  
+*Pedro:* From the client call I see number `15` but I have no idea what it might be.  
+*Eve:* Agreed. Then, let's make all parameters are named and add precondition for required, the same way you do with the builder.
+
+```clojure
+(defn make-coffee
+  [& {:keys [name amount water milk sugar cinnamon]
+      :or {name "" amount 0 water 0 milk 0 sugar 0 cinnamon 0}}]
+  {:pre [(not (empty? name))
+         (> amount 0)
+         (> water 0)]}
+  ;; definition goes here		 
+
+
+(make-coffee :name "Royale Coffee"
+             :amount 15
+             :water 100
+             :milk 10
+             :cinnamon 3)
+```
+
+*Eve:* As you see all parameters are named and all required params are checked in `:pre` constraint. If constraints are violated `AssertionError` is thrown.  
+*Pedro:* Interesting, `:pre` is a part of a language?  
+*Eve:* Sure, it's just a simple assertion. There is also `:post` constraint, with the similar effect.  
+*Pedro:* Hm, okay. But as you know `Builder` pattern often used as a mutable datastucture, `StringBuilder` for example.
+*Eve:* It's not a part of clojure philosophy to use mutables, but if you *really* want, no problem.
+
+```clojure
+TODO
 ```
 
 ### Episode 14: Facade
 
 ### Episode 15: Singleton
 
-### <a id="cast"/>Cast
+### Cast
 
 > A long time ago in a galaxy far, far away...
 
@@ -1608,6 +1649,6 @@ and names are just anagrams.
 **Dex Ringeus** - UX Designer  
 **Veerco Wierde** - Code Review  
 **Dartee Hebl** - Heartbleed  
-**Bertie Prayc** - Cyber Pirate__
-**Cristopher, Matton & Pharts**  - Important Charts & Reports
-**Tuck Brass** - Starbucks
+**Bertie Prayc** - Cyber Pirate  
+**Cristopher, Matton & Pharts** - Important Charts & Reports  
+**Tuck Brass** - Starbucks  

@@ -1,11 +1,14 @@
 ---
 layout: page
 title: About
+header: About
 permalink: /about/
 comments: false
 sharing: false
+group: navigation
 footer: true
 ---
+{% include JB/setup %}
 
 ```bash
 % whoami
@@ -21,3 +24,5 @@ I like good music, fiction books, vulgar jokes and stupid pictures. Check more o
 * [Facebook](https://www.facebook.com/mishadoff)
 * [Twitter](https://twitter.com/mishadoff)
 * [Github](https://github.com/mishadoff)
+* [LinkedIn](https://www.linkedin.com/pub/mykhailo-kozik/19/6b6/b25)
+* [StackOverflow](http://stackoverflow.com/users/555553/mishadoff)

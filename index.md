@@ -18,3 +18,7 @@ header_title: mishadoff thoughts
   {% endfor %}
 </ul>
 </div>
+
+<div style="text-align:center">
+  — <a href="/archive">Blog Archive</a> —
+</div>
