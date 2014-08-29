@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Clojure Design Patterns"
-date: 2014-05-26 00:09
+date: 2014-08-29 00:09
 comments: true
 categories: [clojure, programming, java, story, patterns]
 published: true
@@ -29,17 +29,19 @@ All characters are fake, coincidences are accidental.*
 - [Episode  3. State](#state)
 - [Episode  4. Visitor](#visitor)
 - [Episode  5. Template Method](#template_method)
-- [Episode  6. Iterator](#template_method)
+- [Episode  6. Iterator](#iterator)
 - [Episode  7. Memento](#memento)
 - [Episode  8. Prototype](#prototype)
 - [Episode  9. Mediator](#mediator)
 - [Episode 10. Observer](#observer)
-- [Episode 11. Interpreter](#interpreter) [RAW]
+- [Episode 11. Interpreter](#interpreter)
 - [Episode 12. Flyweight](#flyweight)
 - [Episode 13. Builder](#builder)
 
+- [Episode 14. Facade](#facade) (TODO)
+- [Episode 15. Singleton](#singleton) (TODO)
+
 - Chain of responsibility
-- Facade [!]
 - Singleton
 - Abstract Factory
 - Factory Method
@@ -48,7 +50,7 @@ All characters are fake, coincidences are accidental.*
 - Composite
 - Decorator
 - Proxy
-- Cast
+- [Cast](#cast)
 
 ### <div id="intro"/>Intro
 
@@ -62,7 +64,7 @@ applying design patterns.
 > acquired new project for USA customer.
 > First delivery is a register, login and logout functionality.
 
-*Pedro:* Oh, that's easy. You just need a Command interface...  
+**Pedro:** Oh, that's easy. You just need a Command interface...  
 
 ``` java
 interface Command {
@@ -70,7 +72,7 @@ interface Command {
 }
 ```
 
-*Pedro:* Every action should implement it and define `execute` behaviour.
+**Pedro:** Every action should implement it and define `execute` behaviour.
 
 ``` java
 public class LoginCommand implements Command {
@@ -106,19 +108,19 @@ public class LogoutCommand implements Command {
 }
 ```
 
-*Pedro:* Usage is simple as well.
+**Pedro:** Usage is simple as well.
 
 ``` java
 (new LoginCommand("django", "unCh@1ned")).execute();
 (new LogoutCommand("django")).execute();
 ```
 
-*Pedro:* What do you think, Eve?  
-*Eve:* Why are you using redundant wrapping and just don't call `DB.login`?  
-*Pedro:* It's important to wrap here, because now we can preserve `Command` objects.  
-*Eve:* For what purpose?  
-*Pedro:* Delayed call, logging, history tracking, caching, plenty of usages.  
-*Eve:* Ok, how about that?  
+**Pedro:** What do you think, Eve?  
+**Eve:** Why are you using redundant wrapping and just don't call `DB.login`?  
+**Pedro:** It's important to wrap here, because now we can preserve `Command` objects.  
+**Eve:** For what purpose?  
+**Pedro:** Delayed call, logging, history tracking, caching, plenty of usages.  
+**Eve:** Ok, how about that?  
 
 ``` clojure
 (defn execute [command]
@@ -128,8 +130,8 @@ public class LogoutCommand implements Command {
 (execute #(db/logout "django"))
 ```
 
-*Pedro:* What the hell this hash sign?  
-*Eve:* A shortcut for javaish  
+**Pedro:** What the hell this hash sign?  
+**Eve:** A shortcut for javaish  
 
 ``` java
 new SomeInterfaceWithOneMethod() {
@@ -140,8 +142,8 @@ new SomeInterfaceWithOneMethod() {
 };
 ```
 
-*Pedro:* Just like `Command` interface...  
-*Eve:* Or if you want - no-hash solution.  
+**Pedro:** Just like `Command` interface...  
+**Eve:** Or if you want - no-hash solution.  
 
 ``` clojure
 (defn execute [command & args]
@@ -150,15 +152,15 @@ new SomeInterfaceWithOneMethod() {
 (execute db/login "django" "unCh@1ned")
 ```
 
-*Pedro:* And how do you save function for delayed call in that case?  
-*Eve:* Answer yourself. What do you need to call a function?  
-*Pedro:* Its name...  
-*Eve:* And?  
-*Pedro:* ...arguments.  
-*Eve:* Bingo. All you do is saving a pair (*function-name*, *arguments*) and call it whenever you want using
+**Pedro:** And how do you save function for delayed call in that case?  
+**Eve:** Answer yourself. What do you need to call a function?  
+**Pedro:** Its name...  
+**Eve:** And?  
+**Pedro:** ...arguments.  
+**Eve:** Bingo. All you do is saving a pair (*function-name*, *arguments*) and call it whenever you want using
 `(apply function-name arguments)`  
-*Pedro:* Hmm... Looks simple.  
-*Eve:* Definitely, **Command is just a function.**  
+**Pedro:** Hmm... Looks simple.  
+**Eve:** Definitely, **Command is just a function.**  
 
 ### <div id="strategy"/>Episode 2. Strategy
 
@@ -170,13 +172,13 @@ new SomeInterfaceWithOneMethod() {
 > Obviously, because they pay.
 > Reverse sorting should keep subscripted users on top.
 
-*Pedro:* Ha, just call `Collections.sort(users, comparator)`
+**Pedro:** Ha, just call `Collections.sort(users, comparator)`
 with custom comparator.  
-*Eve:* How would you implement it?  
-*Pedro:* You need to take `Comparator` interface
+**Eve:** How would you implement it?  
+**Pedro:** You need to take `Comparator` interface
 and provide implementation for `compare(Object o1, Object o2)` method.
 Also you need another implementation for `ReverseComparator`  
-*Eve:* Stop talking, show me the code!  
+**Eve:** Stop talking, show me the code!  
 
 ``` java
 class SubsComparator implements Comparator<User> {
@@ -214,8 +216,8 @@ Collections.sort(users, new SubsComparator());
 Collections.sort(users, new ReverseSubsComparator());
 ```
 
-*Pedro:* Could you do the same?  
-*Eve:* Yeah, something like that  
+**Pedro:** Could you do the same?  
+**Eve:** Yeah, something like that  
 
 ``` clojure
 (sort (comparator 
@@ -228,8 +230,8 @@ Collections.sort(users, new ReverseSubsComparator());
              :else false))) users)
 ```
 
-*Pedro:* Pretty similar.  
-*Eve:* But we can do it better  
+**Pedro:** Pretty similar.  
+**Eve:** But we can do it better  
 
 ``` clojure
 ;; forward sort
@@ -239,15 +241,15 @@ Collections.sort(users, new ReverseSubsComparator());
 (sort-by (juxt :subscription :name) #(compare %2 %1) users)
 ```
 
-*Pedro:* Oh my gut! Monstrous oneliners.  
-*Eve:* Functions, you know.  
-*Pedro:* Whatever, it's very hard to understand what's happening there.
+**Pedro:** Oh my gut! Monstrous oneliners.  
+**Eve:** Functions, you know.  
+**Pedro:** Whatever, it's very hard to understand what's happening there.
 
 *Eve explains juxt, complement and sort-by*  
 *10 minutes later*  
 
-*Pedro:* Very doubtful approach to pass strategy.  
-*Eve:* I don't care, **Strategy is just a function passed to another function.**  
+**Pedro:** Very doubtful approach to pass strategy.  
+**Eve:** I don't care, **Strategy is just a function passed to another function.**  
 
 ### <div id="state"/>Episode 3. State
 
@@ -255,8 +257,8 @@ Collections.sort(users, new ReverseSubsComparator());
 > investigated the market and decided
 > to provide user-specific functionality.
 
-*Pedro:* Smooth requirements.  
-*Eve:* Let's clarify them.  
+**Pedro:** Smooth requirements.  
+**Eve:** Let's clarify them.  
 
 - *If user has subscription show him all news in a feed*
 - *Otherwise, show him recent 10 news*
@@ -264,7 +266,7 @@ Collections.sort(users, new ReverseSubsComparator());
 - *If user doesn't have subscription and there is enough money
 to buy subscription, change his state to...*
 
-*Pedro:* State! Awesome pattern. First we make a user state enum  
+**Pedro:** State! Awesome pattern. First we make a user state enum  
 
 ``` java
 public enum UserState {
@@ -283,7 +285,7 @@ public enum UserState {
 }
 ```
 
-*Pedro:* User logic is following  
+**Pedro:** User logic is following  
 
 ``` java
 public class User {
@@ -307,7 +309,7 @@ public class User {
 }
 ```
 
-*Pedro:* Lets call it
+**Pedro:** Lets call it
 
 ``` java
 User user = new User(); // create default user
@@ -318,19 +320,18 @@ user.pay(25); // balance enough to apply subscription
 user.newsFeed(); // show him all news
 ```
 
-*Eve:* You just hide value that affects  
-behaviour inside `User` object. We could use strategy to pass it directly `user.newsFeed(subscriptionType)`.  
-*Pedro:* Agreed, State is very close to the Strategy.  
-They even have the same UML diagrams. but we encapsulate balance and bind it to user.
-*Eve:* I think it achieves the same goal using another mechanism,
+**Eve:** You just hide value that affects behaviour inside `User` object. We could use strategy to pass it directly `user.newsFeed(subscriptionType)`.  
+**Pedro:** Agreed, State is very close to the Strategy.
+They even have the same UML diagrams. but we encapsulate balance and bind it to user.  
+**Eve:** I think it achieves the same goal using another mechanism,
 from clojure perspective it can be implemented
 the same way as strategy pattern. **It is just a first-class function**.  
-*Pedro:* But successive calls can change object's state.  
-*Eve:* Correct, but it has nothing to do with `Strategy` it is just implementation detail.  
-*Pedro:* What about "another mechanism"?  
-*Eve:* Multimethods.  
-*Pedro:* Multi *what*?  
-*Eve:* Look at this  
+**Pedro:** But successive calls can change object's state.  
+**Eve:** Correct, but it has nothing to do with `Strategy` it is just implementation detail.  
+**Pedro:** What about "another mechanism"?  
+**Eve:** Multimethods.  
+**Pedro:** Multi *what*?  
+**Eve:** Look at this  
 
 ``` clojure
 (defmulti news-feed :user-state)
@@ -342,7 +343,7 @@ the same way as strategy pattern. **It is just a first-class function**.
   (take 10 (db/news-feed)))
 ```
 
-*Eve:* And `pay` function it's just a plain function, which changes state of object. We don't like state too much in clojure, but if you wish.  
+**Eve:** And `pay` function it's just a plain function, which changes state of object. We don't like state too much in clojure, but if you wish.  
 
 ``` clojure
 (def user (atom {:name "Jackie Brown"
@@ -365,12 +366,12 @@ the same way as strategy pattern. **It is just a first-class function**.
 (news-feed @user) ;; all news
 ```
 
-*Pedro:* Is dispatching by multimethods better than dispatching by enum?  
-*Eve:* No, in this particlular case, but in general yes.  
-*Pedro:* Explain, please  
-*Eve:* Do you know what *double dispatch* is?  
-*Pedro:* Not sure.  
-*Eve:* Well, it is topic for `Visitor` pattern.
+**Pedro:** Is dispatching by multimethods better than dispatching by enum?  
+**Eve:** No, in this particlular case, but in general yes.  
+**Pedro:** Explain, please  
+**Eve:** Do you know what *double dispatch* is?  
+**Pedro:** Not sure.  
+**Eve:** Well, it is topic for `Visitor` pattern.
 
 ### <div id="visitor"/>Episode 4. Visitor
 
@@ -378,8 +379,8 @@ the same way as strategy pattern. **It is just a first-class function**.
 > allows users export their messages, activities and achievements
 > in different formats.
 
-*Eve:* So, how do you plan to do it?  
-*Pedro:* We have one hierarchy for item types
+**Eve:** So, how do you plan to do it?  
+**Pedro:** We have one hierarchy for item types
 (Message, Activity) and another
 for file formats (PDF, XML)  
 
@@ -421,10 +422,10 @@ class Activity extends Item {
 }
 ```
 
-*Pedro:* That's all.  
-*Eve:* Nice, but how do you dispatch on argument type?  
-*Pedro:* What the problem?  
-*Eve:* Consider this snippet  
+**Pedro:** That's all.  
+**Eve:** Nice, but how do you dispatch on argument type?  
+**Pedro:** What the problem?  
+**Eve:** Consider this snippet  
 
 ``` java
 Item i = new Activity();
@@ -432,16 +433,16 @@ Format f = new PDF();
 i.export(f);
 ```
 
-*Pedro:* Nothing suspicious here.  
-*Eve:* Actually, if you run this code you get `UnknownFormatException`  
-*Pedro:* Wait...Really?  
-*Eve:* In java you can use only *single dispatch*. That means if you call `i.export(f)`
+**Pedro:** Nothing suspicious here.  
+**Eve:** Actually, if you run this code you get `UnknownFormatException`  
+**Pedro:** Wait...Really?  
+**Eve:** In java you can use only *single dispatch*. That means if you call `i.export(f)`
 you dispatches on the actual type of `i`, not `f`.  
-*Pedro:* I'm surprised. So, there is no dispatch on argument type?  
-*Eve:* That's what visitor hack for. After you got a dispatch on `i` type, you
+**Pedro:** I'm surprised. So, there is no dispatch on argument type?  
+**Eve:** That's what visitor hack for. After you got a dispatch on `i` type, you
 additionally call `f.someMethod(i)` and dispatched on `f` type.  
-*Pedro:* How that looks in code?  
-*Eve:* You separately define export operations for all types as a `Visitor`  
+**Pedro:** How that looks in code?  
+**Eve:** You separately define export operations for all types as a `Visitor`  
 
 ``` java
 public interface Visitor {
@@ -462,7 +463,7 @@ public class PDFVisitor implements Visitor {
 }
 ```
 
-*Eve:* Your items change signature to accept different visitors.  
+**Eve:** Your items change signature to accept different visitors.  
 
 ``` java
 public abstract class Item {
@@ -484,7 +485,7 @@ class Activity extends Item {
 }
 ```
 
-*Eve:* To use it you may call  
+**Eve:** To use it you may call  
 
 ``` java
 Item i = new Message();
@@ -492,16 +493,16 @@ Visitor v = new PDFVisitor();
 i.accept(v);
 ```
 
-*Eve:* And everything works fine.
+**Eve:** And everything works fine.
 Moreover, you can add new operations for
 activities and messages
 by just defining new visitors and
 without changing their code.  
-*Pedro:* That's really useful. But implementation is tough,
+**Pedro:** That's really useful. But implementation is tough,
 it is the same for clojure?  
-*Eve:* Not really, clojure supports it natively via multimethods  
-*Pedro:* Multi *what*?  
-*Eve:* Just follow the code...
+**Eve:** Not really, clojure supports it natively via multimethods  
+**Pedro:** Multi *what*?  
+**Eve:** Just follow the code...
 First we define dispatcher *function*
 
 ``` clojure
@@ -509,7 +510,7 @@ First we define dispatcher *function*
   (fn [item format] [(:type item) format]))
 ```
 
-*Eve:* It accepts `item` and `format` to be exported. Examples:
+**Eve:** It accepts `item` and `format` to be exported. Examples:
 
 ``` clojure
 ;; Message
@@ -520,7 +521,7 @@ First we define dispatcher *function*
 :pdf, :xml
 ```
 
-*Eve:* And now you just provide a functions
+**Eve:** And now you just provide a functions
 for different combinatations, and dispatcher decide which one to call.
 
 ``` clojure
@@ -537,8 +538,8 @@ for different combinatations, and dispatcher decide which one to call.
   (exporter/message->xml item))
 ```
 
-*Pedro:* What if unknown format passed?  
-*Eve:* We could specify default dipatcher function.  
+**Pedro:** What if unknown format passed?  
+**Eve:** We could specify default dipatcher function.  
 
 ``` clojure
 (defmethod export :default [item format]
@@ -546,9 +547,9 @@ for different combinatations, and dispatcher decide which one to call.
 
 ```
 
-*Pedro:* Ok, but there is no hierarchy for `:pdf` and `:xml`.
+**Pedro:** Ok, but there is no hierarchy for `:pdf` and `:xml`.
 They are just keywords?  
-*Eve:* Correct, simple problem - simple solution.
+**Eve:** Correct, simple problem - simple solution.
 If you need advanced features, you could use *adhoc hierarchies*
 or dispatch by `class`.  
 
@@ -557,10 +558,10 @@ or dispatch by `class`.
 (derive ::xml ::format)
 ```
 
-*Pedro:* Quadrocolons?!  
-*Eve:* Assume they are just keywords.  
-*Pedro:* Ok.  
-*Eve:* Then you add functions for every dispatch type
+**Pedro:** Quadrocolons?!  
+**Eve:** Assume they are just keywords.  
+**Pedro:** Ok.  
+**Eve:** Then you add functions for every dispatch type
 `::pdf`, `::xml` and `::format`  
 
 ``` clojure
@@ -569,47 +570,47 @@ or dispatch by `class`.
 (defmethod export [:activity ::format])
 ```
 
-*Eve:* If some new format (i.e. csv) appears in the system  
+**Eve:** If some new format (i.e. csv) appears in the system  
 
 ``` clojure
 (derive ::csv ::format)
 ```
 
-*Eve:* It will be dispatched to `::format` function,
+**Eve:** It will be dispatched to `::format` function,
 until you add a separate `::csv` function.  
-*Pedro:* Seems good.  
-*Eve:* Definitely, much easier.  
-*Pedro:* So, basically, **if a language support multiple dispatch,
+**Pedro:** Seems good.  
+**Eve:** Definitely, much easier.  
+**Pedro:** So, basically, **if a language support multiple dispatch,
 you don't need Visitor pattern**?  
-*Eve:* Exactly.  
+**Eve:** Exactly.  
 
 ### <div id="template_method"/>Episode 5. Template Method
 
 > MMORPG **Mech Dominore Fight Saga** requested a game bot
 > for their VIP users. Not fair.
 
-*Pedro:* First, we must decide what actions 
+**Pedro:** First, we must decide what actions 
 should be automated with bot.  
-*Eve:* Have you ever played RPG?  
-*Pedro:* Forntunately, no  
-*Eve:* Oh my... Let's go, I'll show you...  
+**Eve:** Have you ever played RPG?  
+**Pedro:** Forntunately, no  
+**Eve:** Oh my... Let's go, I'll show you...  
 
 *2 weeks later*
 
-*Pedro:* ...fantastic, I found epic sword, which has +100 attack.  
-*Eve:* Unbelievable. But now, it's time for bot.  
-*Pedro:* Easy-peasy. We could select following events  
+**Pedro:** ...fantastic, I found epic sword, which has +100 attack.  
+**Eve:** Unbelievable. But now, it's time for bot.  
+**Pedro:** Easy-peasy. We could select following events  
 
 - Battle
 - Quest
 - Opening Chest
 
-*Pedro:* Characters behave differently in
+**Pedro:** Characters behave differently in
 different events, for example mages cast spells in battle,
 but rogues prefer silent melee combat, locked chests are skipped
 by most characters, but rogues can unlock them, etc.  
-*Eve:* Looks like ideal candidate for `Template Method`?  
-*Pedro:* Yes. We define abstract algorithm, and then specify
+**Eve:** Looks like ideal candidate for `Template Method`?  
+**Pedro:** Yes. We define abstract algorithm, and then specify
 differences in subclasses.  
 
 ``` java
@@ -638,11 +639,11 @@ public abstract class Character {
 }
 ```
 
-*Pedro:* We've separated to `Character` class everything common to all characters.
+**Pedro:** We've separated to `Character` class everything common to all characters.
 Now we can create subclasses, that define how character should behave in specific situation.
 In out case: *handling locked chests* and *attacking enemies*.  
-*Eve:* Let's start with a Mage class.  
-*Pedro:* Mage? Okay.
+**Eve:** Let's start with a Mage class.  
+**Pedro:** Mage? Okay.
 He can't open locked chest, so implementation is just *do nothing*.
 And if he is attacking enemies, if there are more than 10 enemies,
 freeze them, and cast teleport to run away. If there are 10 enemies or less
@@ -669,8 +670,8 @@ public class MageCharacter extends Character {
 }
 ```
 
-*Eve:* Excellent, what about Rogue class?  
-*Pedro:* Easy as well, rogues can unlock chests and
+**Eve:** Excellent, what about Rogue class?  
+**Pedro:** Easy as well, rogues can unlock chests and
 prefer silent combat, handle enemies one by one.  
 
 ``` java
@@ -690,18 +691,18 @@ public class RogueCharacter extends Character {
 }
 ```
 
-*Eve:* Excellent. But how this approach is differrent from Strategy?  
-*Pedro:* What?  
-*Eve:* I mean, you redefined behaviour by using subclasses,
+**Eve:** Excellent. But how this approach is differrent from Strategy?  
+**Pedro:** What?  
+**Eve:** I mean, you redefined behaviour by using subclasses,
 but in Strategy pattern you did the same:
 redefined behaviour by using functions.  
-*Pedro:* Well, another approach.  
-*Eve:* State was handled with another approach as well.  
-*Pedro:* What are you trying to say?  
-*Eve:* You are solving the same kind of problem,
+**Pedro:** Well, another approach.  
+**Eve:** State was handled with another approach as well.  
+**Pedro:** What are you trying to say?  
+**Eve:** You are solving the same kind of problem,
 but change the approach to it.  
-*Pedro:* How do yo solve this problem using strategy in clojure?  
-*Eve:* Just pass a set of specific functions for each character. For example, your abstract move may look like:  
+**Pedro:** How do yo solve this problem using strategy in clojure?  
+**Eve:** Just pass a set of specific functions for each character. For example, your abstract move may look like:  
 
 ``` clojure
 (defn move-to [character location]
@@ -717,7 +718,7 @@ but change the approach to it.
   (move-to character (:next-location location)))
 ```
 
-*Eve:* To add character-specific implementation
+**Eve:** To add character-specific implementation
 of methods `handle-chest` and `attack`, implement them
 and pass as an argument.  
 
@@ -744,8 +745,8 @@ and pass as an argument.
 )
 ```
 
-*Pedro:* OMG, what's happening there?  
-*Eve:* We changed signature of `move-to` to accept
+**Pedro:** OMG, what's happening there?  
+**Eve:** We changed signature of `move-to` to accept
 `handle-chest` and `attack` functions.  
 
 ``` clojure
@@ -754,12 +755,12 @@ and pass as an argument.
   :attack       mage-attack)
 ```
 
-*Eve:* Keep in mind that if these functions are not provided
+**Eve:** Keep in mind that if these functions are not provided
 we use default behavior: do nothing for `handle-chest` and
 run away from enemies in `attack`  
-*Pedro:* Fine, but is this better than approach by subclassing? Seems that we have a lot of redundant information in
+**Pedro:** Fine, but is this better than approach by subclassing? Seems that we have a lot of redundant information in
 `move-to` call.  
-*Eve:* It's fixable, just define this call once, and give it
+**Eve:** It's fixable, just define this call once, and give it
 alias  
 
 ``` clojure
@@ -769,7 +770,7 @@ alias
     :attack       mage-attack))
 ```
 
-*Eve:* Or use multimethods, it's even better.  
+**Eve:** Or use multimethods, it's even better.  
 
 ``` clojure
 (defmulti move 
@@ -781,10 +782,10 @@ alias
     :attack       mage-attack))
 ```
 
-*Pedro:* I understand. But why do you think pass as argument is better than subclassing?  
-*Eve:* You can change behaviour dynamically. Assume your mage
+**Pedro:** I understand. But why do you think pass as argument is better than subclassing?  
+**Eve:** You can change behaviour dynamically. Assume your mage
 has no mana, so instead of trying to cast fireballs, he can just teleport and run away, you just provide new function.  
-*Pedro:* Makes sense. **Functions everywhere**.  
+**Pedro:** Makes sense. **Functions everywhere**.  
 
 ### <div id="iterator"/>Episode 6. Iterator
 
@@ -793,21 +794,21 @@ has no mana, so instead of trying to cast fireballs, he can just teleport and ru
 >
 > "Are we in 1980 or what?"
 
-*Pedro:* We definitely should use pattern Iterator from java.  
-*Eve:* Don't be fool, nobody's using `java.util.Iterator`  
-*Pedro:* Everybody use it implicitly in `for-each` loop. It's a good way to traverse a container.  
-*Eve:* What does it mean *"to traverse a container"*?  
-*Pedro:* Formally, the container should provide two methods for you:  
+**Pedro:** We definitely should use pattern Iterator from java.  
+**Eve:** Don't be fool, nobody's using `java.util.Iterator`  
+**Pedro:** Everybody use it implicitly in `for-each` loop. It's a good way to traverse a container.  
+**Eve:** What does it mean *"to traverse a container"*?  
+**Pedro:** Formally, the container should provide two methods for you:  
 `next()` to return next element and `hasNext()` to return true if container has more elements.  
-*Eve:* Ok. Do you know what linked list is?  
-*Pedro:* Singly linked list?  
-*Eve:* Singly linked list.  
-*Pedro:* Sure. It is a container consists of nodes. 
+**Eve:** Ok. Do you know what linked list is?  
+**Pedro:** Singly linked list?  
+**Eve:** Singly linked list.  
+**Pedro:** Sure. It is a container consists of nodes. 
 Each node has a data value and reference to the next node.
 And `null` value if there is no next node.  
-*Eve:* Correct. Now tell me how traversing such list is differ
+**Eve:** Correct. Now tell me how traversing such list is differ
 from traversing via iterator?  
-*Pedro:* Emmm...  
+**Pedro:** Emmm...  
 
 Pedro wrote two traversing snippets:
 
@@ -829,8 +830,8 @@ while (next != null) {
 }
 ```
 
-*Pedro:* They are pretty similar...What is analogue of `Iterator` in clojure?  
-*Eve:* `seq` function.  
+**Pedro:** They are pretty similar...What is analogue of `Iterator` in clojure?  
+**Eve:** `seq` function.  
 
 
 ``` clojure
@@ -841,10 +842,10 @@ while (next != null) {
 (seq "abc")         => (\a \b \c)
 ```
 
-*Pedro:* It returns a list...  
-*Eve:* Because **Iterator is just a list**  
-*Pedro:* But is it possible to make `seq` works on custom datastructures?  
-*Eve:* Implement `clojure.lang.Seqable` interface  
+**Pedro:** It returns a list...  
+**Eve:** Because **Iterator is just a list**  
+**Pedro:** But is it possible to make `seq` works on custom datastructures?  
+**Eve:** Implement `clojure.lang.Seqable` interface  
 
 ``` clojure
 (deftype RedGreenBlackTree [& elems]
@@ -854,21 +855,21 @@ while (next != null) {
 	))
 ```
 
-*Pedro:* Fine then.
+**Pedro:** Fine then.
 
 ### Episode 7: Memento
 
 > User **Chad Bogue** lost the message he was writing
-> for a two days. Implement save button for him.
+> for two days. Implement save button for him.
 
-*Pedro:* I don't believe there are people who
-can type in textbox for a two days. Two. Days.  
-*Eve:* Let's *save* him.  
-*Pedro:* I *googled* this problem. Most popular approach
+**Pedro:** I don't believe there are people who
+can type in textbox for two days. Two. Days.  
+**Eve:** Let's *save* him.  
+**Pedro:** I *googled* this problem. Most popular approach
 to implement save button is Memento pattern.
 You need *originator*, *caretaker* and *memento* objects.  
-*Eve:* What's that?  
-*Pedro:* *Originator* is just an object or state that we want to preserve.
+**Eve:** What's that?  
+**Pedro:** *Originator* is just an object or state that we want to preserve.
 (text inside a textbox), *caretaker* is responsible to save state (save button)
 and *memento* is just an object to encapsulate state.  
 
@@ -900,7 +901,7 @@ public class TextBox {
 }
 ```
 
-*Pedro:* Memento is just immutable object  
+**Pedro:** Memento is just immutable object  
 
 ``` java
 public final class Memento {
@@ -916,7 +917,7 @@ public final class Memento {
 }
 ```
 
-*Pedro:* And caretaker is a demo  
+**Pedro:** And caretaker is a demo  
 
 ``` java
 // open browser, init empty textbox
@@ -941,8 +942,8 @@ textbox = new TextBox();
 textbox.restore(checkpoint1);
 ```
 
-*Pedro:* Just a note if you want a multiple checkpoints, save memento's to the list.  
-*Eve:* Looks as a bunch of nouns, but actually it's all about two functions `save` and `restore`.  
+**Pedro:** Just a note if you want a multiple checkpoints, save memento's to the list.  
+**Eve:** Looks as a bunch of nouns, but actually it's all about two functions `save` and `restore`.  
 
 ``` clojure
 (def textbox (atom {}))
@@ -966,7 +967,7 @@ textbox.restore(checkpoint1);
   (swap! textbox assoc :text @memento))
 ```
 
-*Eve:* And demo as well.
+**Eve:** And demo as well.
 
 ``` clojure
 (init-textbox)
@@ -979,42 +980,42 @@ textbox.restore(checkpoint1);
 (restore)
 ```
 
-*Pedro:* It's pretty the same code.  
-*Eve:* Yes, but you must care about memento immutability  
-*Pedro:* What does it mean?  
-*Eve:* You are lucky, that you got `String` object in this example,
+**Pedro:** It's pretty the same code.  
+**Eve:** Yes, but you must care about memento immutability  
+**Pedro:** What does it mean?  
+**Eve:** You are lucky, that you got `String` object in this example,
 `String` is immutable. But if you have something, that
 may change its internal state, you need to perform deep copy of this object for memento.  
-*Pedro:* Oh, right. It's just a recursive `clone()` calls to
+**Pedro:** Oh, right. It's just a recursive `clone()` calls to
 obtain prototype.  
-*Eve:* We will talk about Prototype in a minute, but just
-remember that `Memento` is not about *caretaker* and *originator*, it is about **save and restore**.  
+**Eve:** We will talk about Prototype in a minute, but just
+remember that `Memento` is not about *caretaker* and *originator*, it is about **save** and **restore**.  
 
 ### <div id="prototype"/>Episode 8: Prototype
 
 > **Dex Ringeus** detected that users feel uncomfortable
 > with registration form. Make it more usable.
 
-*Pedro:* So, what's the problem with the registration?  
-*Eve:* There are lot of fields users bored to type in.  
-*Pedro:* For example?  
-*Eve:* For example, `weight`. Having such field scares
+**Pedro:** So, what's the problem with the registration?  
+**Eve:** There are lot of fields users bored to type in.  
+**Pedro:** For example?  
+**Eve:** For example, `weight`. Having such field scares
 90% of female users.  
-*Pedro:* But this field is important for our analytics
+**Pedro:** But this field is important for our analytics
 system, we make food and clothes recomendations based on that field.  
-*Eve:* Then, make it optional, and if it is not provided, take
+**Eve:** Then, make it optional, and if it is not provided, take
 some default value.  
-*Pedro:* `60 kg` good?  
-*Eve:* I think so.  
-*Pedro:* Ok, give me two minutes.  
+**Pedro:** `60 kg` is ok?  
+**Eve:** I think so.  
+**Pedro:** Ok, give me two minutes.  
 
 *2 hours later*
 
-*Pedro:* I suggest to use some registration *prototype*
+**Pedro:** I suggest to use some registration *prototype*
 which has all fields are filled with default values. 
 After user completes the form we modify filled values.  
-*Eve:* Sounds great.  
-*Pedro:* Here it is our standard registration form, with prototype in `clone()` method.  
+**Eve:** Sounds great.  
+**Pedro:** Here it is our standard registration form, with prototype in `clone()` method.  
 
 ``` java
 public class RegistrationForm implements Cloneable {
@@ -1053,19 +1054,19 @@ public class RegistrationForm implements Cloneable {
 }
 ```
 
-*Pedro:* Every time we create a user, call `clone()` and then override needed properties.  
-*Eve:* Awful! In mutable world `clone()` is needed to create
+**Pedro:** Every time we create a user, call `clone()` and then override needed properties.  
+**Eve:** Awful! In mutable world `clone()` is needed to create
 new object with the same properties.
 The hard part is the copy must be deep, i.e. instead of copying
 reference you need recursively `clone()` other objects,
 and what if one of them doesn't have `clone()`...  
-*Pedro:* That's the problem and this pattern solves it.  
-*Eve:* I don't think it is a solution if you need to implement
+**Pedro:** That's the problem and this pattern solves it.  
+**Eve:** I don't think it is a solution if you need to implement
 clone every time you adding new object.  
-*Pedro:* How clojure avoid this?  
-*Eve:* Clojure has immutable data structures. That's all.  
-*Pedro:* How does it solve prototype problem?  
-*Eve:* Every time you modify object, you get
+**Pedro:** How clojure avoid this?  
+**Eve:** Clojure has immutable data structures. That's all.  
+**Pedro:** How does it solve prototype problem?  
+**Eve:** Every time you modify object, you get
 a fresh new immutable copy of your data, and old one is not changed. **Prototype is not needed in immutable world**  
 
 ``` clojure
@@ -1089,11 +1090,11 @@ a fresh new immutable copy of your data, and old one is not changed. **Prototype
 	 :month-salary 0)
 ```
 
-*Pedro:* Great! But how this affects performance?  
+**Pedro:** Great! But how this affects performance?  
 Copying million rows each time you adding new value seems
 time consuming operation.  
-*Eve:* No, it is not. Go to Google and search for *persistent data structures* and *structural sharing*  
-*Pedro:* Thanks a lot.  
+**Eve:** No, it is not. Go to Google and search for *persistent data structures* and *structural sharing*  
+**Pedro:** Thanks a lot.  
 
 ### <div id="mediator"/>Episode 9: Mediator
 
@@ -1102,11 +1103,11 @@ time consuming operation.
 > **Veerco Wierde** emphasizes tight coupling 
 > in chat application.
 
-*Eve:* What is tight coupling?  
-*Pedro:* It's the problem when objects
+**Eve:** What is tight coupling?  
+**Pedro:** It's the problem when objects
 know too much about each other.  
-*Eve:* Could you be more specific?  
-*Pedro:* Look at the current chat implementation  
+**Eve:** Could you be more specific?  
+**Pedro:** Look at the current chat implementation  
 
 ``` java
 public class User {
@@ -1134,12 +1135,12 @@ public class User {
 }
 ```
 
-*Pedro:* The problem here is the user knows
+**Pedro:** The problem here is the user knows
 everything about other users. It is very hard to use and maintain such code.
 When new user connects to the chat, you must add a reference to him via `addUser`
 for every existing user.  
-*Eve:* So, we just move one piece of responsibility to another class?  
-*Pedro:* Yes, kind of. We create *mega-aware* class, called mediator, that binds
+**Eve:** So, we just move one piece of responsibility to another class?  
+**Pedro:** Yes, kind of. We create *mega-aware* class, called mediator, that binds
 all parts together. Obviously, each part knows only about mediator.  
 
 ``` java
@@ -1177,13 +1178,13 @@ public class Mediator {
 }
 ```
 
-*Eve:* That was easy.  
-*Pedro:* Profit may be underestimated, but
+**Eve:** That seems like a simple refactoring problem.  
+**Pedro:** Profit may be underestimated, but
 if you have hundreds of mutually connected components
 (UI for example) mediator is really a savior.  
-*Eve:* Agreed.  
-*Pedro:* Now the clojure turn.  
-*Eve:* Ok...let's look...your mediator is responsible
+**Eve:** Agreed.  
+**Pedro:** Now the clojure turn.  
+**Eve:** Ok...let's look...your mediator is responsible
 for *saving users* and *sending messages*  
 
 ``` clojure
@@ -1207,7 +1208,8 @@ for *saving users* and *sending messages*
 (send-message {:name "Joe"} "Toby?")
 ```
 
-*Pedro:* Good enough.
+**Pedro:** Good enough.
+**Eve:** Nothing interesing here.
 
 ### <div id="observer"/>Episode 10: Observer
 
@@ -1216,10 +1218,10 @@ for *saving users* and *sending messages*
 > dollars balance on his account.
 > Track big transactions to the accounts.
 
-*Pedro:* Are we *Holms*es?  
-*Eve:* No, but there is a lack of logging in the system,
+**Pedro:** Are we *Holmses*?  
+**Eve:** No, but there is a lack of logging in the system,
 need to find a way to track all changes to balance.  
-*Pedro:* We could add observers. Every time we modify
+**Pedro:** We could add observers. Every time we modify
 balance, if change is *big enough*, notify about this and track the reason. We need `Observer` interface  
 
 ``` java
@@ -1228,7 +1230,7 @@ public interface Observer {
 }
 ```
 
-*Pedro:* And two specific observers  
+**Pedro:** And two specific observers  
 
 ``` java
 class MailObserver implements Observer {
@@ -1246,7 +1248,7 @@ class BlockObserver implements Observer {
 }
 ```
 
-*Pedro:* `Tracker` class would be responsible
+**Pedro:** `Tracker` class would be responsible
 for managing observers.  
 
 ``` java
@@ -1265,7 +1267,7 @@ public class Tracker {
 }
 ```
 
-*Pedro:* And the last part: init tracker with the user and
+**Pedro:** And the last part: init tracker with the user and
 modify its `addMoney` method. If transcation amount is greaterthan `100$`, notify FBI and block this user.  
 
 ``` java
@@ -1294,7 +1296,7 @@ public class User {
 }
 ```
 
-*Eve:* Why are you created two separate observers?
+**Eve:** Why are you created two separate observers?
 You could use it in a one.  
 
 ``` java
@@ -1307,11 +1309,11 @@ class MailAndBlock implements Observer {
 }
 ```
 
-*Pedro:* Single responsibility principle.  
-*Eve:* Oh, yeah.  
-*Pedro:* And you can compose observer functionality
+**Pedro:** Single responsibility principle.  
+**Eve:** Oh, yeah.  
+**Pedro:** And you can compose observer functionality
 dynamically.  
-*Eve:* I see your point.  
+**Eve:** I see your point.  
 
 ``` clojure
 ;; Tracker
@@ -1339,8 +1341,8 @@ dynamically.
   (if (> amount 100) (notify)))
 ```
 
-*Pedro:* It's a pretty the same way?  
-*Eve:* Yeah, but there is one improvement using watches.
+**Pedro:** It's a pretty the same way?  
+**Eve:** Yeah, but there is one improvement using watches.
 
 ``` clojure
 (add-watch
@@ -1351,9 +1353,11 @@ dynamically.
       (notify))))
 ```
 
-*Pedro:* Why is that better?
-*Eve:* First of all, our `add-money` function is clean, it just adds money. Also, watcher tracks *every* change to the state, not the ones we handle in mutator functions, like `add-money`
-*Pedro:* That's awesome!
+**Pedro:** Why is that better?  
+**Eve:** First of all, our `add-money` function is clean, it just adds money. Also, watcher tracks *every* change to the state, not the ones we handle in mutator functions, like `add-money`
+**Pedro:** Explain please.  
+**Eve:** If there is provided another secred method `secret-add-money` for changing balance, watchers will handle that as well.  
+**Pedro:** That's awesome!  
 
 ### <div id="interpreter"/>Episode 11: Interpreter
 
@@ -1361,31 +1365,162 @@ dynamically.
 > and shared it via BitTorrent system.
 > Create a fake account for *Bertie* to discredit him.
 
-*Pedro:* BitTorrent system based on `.torrent` files.
+**Pedro:** BitTorrent system based on `.torrent` files.
 We need to write [Bencode](http://en.wikipedia.org/wiki/Bencode) encoder.  
-*Eve:* Yes, but first let's agree on the format spec  
+**Eve:** Yes, but first let's agree on the format spec  
 
 Bencode encoding rules:
 
-- Integer `N` is encoded as `i<N>e`. (*42 = i42e*)
-- String `S` is encoded as `<length>:<contents>` (*hello = 5:hello*)
-- List of values is encoded as `l<contents>e` (*[1, "Bye"] = li1e3:Byee*)
-- Map of values is encoded as `d<contents>e` (*{"R" 2, "D" 2} = d1:Ri2e1:Di2ee*)
+- Two datatypes are supported:
+  - Integer `N` is encoded as `i<N>e`. (42 = i42e)
+  - String `S` is encoded as `<length>:<contents>` (hello = 5:hello)
+- Two containers are supported:
+  - List of values is encoded as `l<contents>e` ([1, "Bye"] = li1e3:Byee)
+  - Map of values is encoded as `d<contents>e` ({"R" 2, "D" 2} = d1:Ri2e1:Di2ee)
+     - Keys are just strings, Values are any bencode element
 
-*Pedro:* Seems easy.  
-*Eve:* Maybe, but take into account that values may be nested, list inside list, etc.  
-*Pedro:* Sure. I think we can use *Interpreter* pattern for bencode encoding.  
-*Eve:* Try it.  
+**Pedro:** Seems easy.  
+**Eve:** Maybe, but take into account that values may be nested, list inside list, etc.  
+**Pedro:** Sure. I think we can use *Interpreter* pattern for bencode encoding.  
+**Eve:** Try it.  
+**Pedro:** We start from interface for all bencode elements  
 
 ``` java
-todo
+interface BencodeElement {
+  String interpret();
+}
 ```
+
+**Pedro:** Then we provide implementation for each datatype and datacontainer  
+
+``` java
+class IntegerElement implements BencodeElement {
+  private int value;
+
+  public IntegerElement(int value) {
+    this.value = value;
+  }
+
+  @Override
+  public String interpret() {
+    return "i" + value + "e";
+  }
+}
+
+class StringElement implements BencodeElement {
+  private String value;
+
+  StringElement(String value) {
+    this.value = value;
+  }
+
+  @Override
+  public String interpret() {
+    return value.length() + ":" + value;
+  }
+}
+
+class ListElement implements BencodeElement {
+  private List<? extends BencodeElement> list;
+
+  ListElement(List<? extends BencodeElement> list) {
+    this.list = list;
+  }
+
+  @Override
+  public String interpret() {
+    String content = "";
+    for (BencodeElement e : list) {
+      content += e.interpret();
+    }
+    return "l" + content + "e";
+  }
+}
+
+class DictionaryElement implements BencodeElement {
+  private Map<StringElement, BencodeElement> map;
+
+  DictionaryElement(Map<StringElement, BencodeElement> map) {
+    this.map = map;
+  }
+
+  @Override
+  public String interpret() {
+    String content = "";
+    for (Map.Entry<StringElement, BencodeElement> kv : map.entrySet()) {
+      content += kv.getKey().interpret() + kv.getValue().interpret();
+    }
+    return "d" + content + "e";
+  }
+}
+```
+
+**Pedro:** And finally, our bencoded string can be constructed from common datastructures programmatically
+
+``` java
+// discredit user
+Map<StringElement, BencodeElement> mainStructure = new HashMap<StringElement, BencodeElement>();
+// our victim
+mainStructure.put(new StringElement("user"), new StringElement("Bertie"));
+// just downloads files
+mainStructure.put(new StringElement("number_of_downloaded_torrents"), new IntegerElement(623));
+// and nothing uploads
+mainStructure.put(new StringElement("number_of_uploaded_torrents"), new IntegerElement(0));
+// and nothing donates
+mainStructure.put(new StringElement("donation_in_dollars"), new IntegerElement(0));
+// prefer dirty categories
+mainStructure.put(new StringElement("preffered_categories"),
+                      new ListElement(Arrays.asList(
+                          new StringElement("porn"),
+                          new StringElement("murder"),
+                          new StringElement("pokemons")
+                      )));
+BencodeElement top = new DictionaryElement(mainStructure);
+
+// let's totally discredit him
+String bencodedString = top.interpret();
+BitTorrent.send(bencodedString);
+```
+
+**Eve:** Interesting, but that is ton of code!
+**Pedro:** We pay readability for capabilities.
+**Eve:** I suppose you've heard concept **Code is Data**, that's a lot easier in clojure
 
 ``` clojure
-todo
+;; multimethod to handle bencode structure
+(defmulti interpret class)
+
+;; implementation of bencode handler for each type
+(defmethod interpret java.lang.Long [n]
+  (str "i" n "e"))
+
+(defmethod interpret java.lang.String [s]
+  (str (count s) ":" s))
+
+(defmethod interpret clojure.lang.PersistentVector [v]
+  (str "l" 
+       (apply str (map interpret v))
+	   "e"))
+
+(defmethod interpret clojure.lang.PersistentArrayMap [m]
+  (str "d" 
+       (apply str (map (fn [[k v]] 
+	                     (str (interpret k)
+                              (interpret v))) m))
+       "e"))
+
+;; usage
+(interpret {"user" "Bertie"
+            "number_of_downloaded_torrents" 623
+			"number_of_uploaded_torrent" 0
+			"donation_in_dollars" 0
+			"preffered categories" ["porn"
+                                    "murder"
+									"pokemons"]})
 ```
 
-## TODO
+**Eve:** You see how it is much easier define specific data?  
+**Pedro:** Sure, and `interpret` it's just a **function** per type, instead of class.
 
 ### <div id="flyweight"/>Episode 12: Flyweight
 
@@ -1393,18 +1528,18 @@ todo
 > detected that reporting system consumes a lot of memory
 > and garbage collector continiously hangs system for seconds. Fix that.
 
-*Pedro:* I've seen this issue before.  
-*Eve:* What's wrong?  
-*Pedro:* They have realtime charts with a lot of different points
-it's a huge amount of memory. As a result garbage collector stops the system.
-*Eve:* Hmmm, what we can do?  
-*Pedro:* Not much, caching does not help us because points are...  
-*Eve:* Wait!  
-*Pedro:* What?  
-*Eve:* They use age values for points, why not precompute these points for most common ages?
-Say for age [0, 100]__
-*Pedro:* You mean use *Flyweight* pattern?  
-*Eve:* I mean reuse objects.  
+**Pedro:** I've seen this issue before.  
+**Eve:** What's wrong?  
+**Pedro:** They have realtime charts with a lot of different points.
+It's a huge amount of memory. As a result garbage collector stops the system.  
+**Eve:** Hmmm, what we can do?  
+**Pedro:** Not much, caching does not help us because points are...  
+**Eve:** Wait!  
+**Pedro:** What?  
+**Eve:** They use age values for points, why not precompute these points for most common ages?
+Say for age [0, 100]  
+**Pedro:** You mean use *Flyweight* pattern?  
+**Eve:** I mean reuse objects.  
 
 ``` java
 class Point {
@@ -1441,12 +1576,12 @@ class Point {
 }
 ```
 
-*Pedro:* For this pattern we need two things: precompute
+**Pedro:** For this pattern we need two things: precompute
 most used points at a startup time, and use static factory
 method instead of constructor to return cached object.  
-*Eve:* Have you tested it?  
-*Pedro:* Sure, the system works like a clock.  
-*Eve:* Excellent, here is my version  
+**Eve:** Have you tested it?  
+**Pedro:** Sure, the system works like a clock.  
+**Eve:** Excellent, here is my version  
 
 ``` clojure
 (defn make-point [x y]
@@ -1463,21 +1598,21 @@ method instead of constructor to return cached object.
 	  (make-point x y))))
 ```
 
-*Eve:* It creates a flat map with pair `[x, y]` as a key, instead of two-dimensional array.  
-*Pedro:* Pretty the same.  
-*Eve:* No, it is much flexible, you can't use two-dimensional array if you need to cache three points or non-integer values.
-*Pedro:* Oh, got it.  
-*Eve:* Even better, in clojure you can use `memoize` function
+**Eve:** It creates a flat map with pair `[x, y]` as a key, instead of two-dimensional array.  
+**Pedro:** Pretty the same.  
+**Eve:** No, it is much flexible, you can't use two-dimensional array if you need to cache three points or non-integer values.  
+**Pedro:** Oh, got it.  
+**Eve:** Even better, in clojure you can use `memoize` function
 to cache calls to factory function `make-point`  
 
 ``` clojure
 (def make-point-memoize (memoize make-point))
 ```
 
-*Eve:* Every call (except first one) with the same parameters
+**Eve:** Every call (except first one) with the same parameters
 return cached value.  
-*Pedro:* That's awesome!  
-*Eve:* Of course, but remember if your function has side-effects, memoization is bad idea.  
+**Pedro:** That's awesome!  
+**Eve:** Of course, but remember if your function has side-effects, memoization is bad idea.  
 
 ### <div id="builder"/>Episode 13: Builder
 
@@ -1485,13 +1620,13 @@ return cached value.
 > coffee-making system is very slow in usage.
 > Customers can't wait long enough and going away.
 
-*Pedro:* Need to understand what's the problem exactly?  
-*Eve:* I've researched, system is old, written in *COBOL* and built around expert system *question-answer*. They were very popular long time ago.  
-*Pedro:* What do you mean by *"question-answer"*  
-*Eve:* There is operator in front of terminal. System asks: *"Do yo want to add water?"*, operator answers *"Yes"*. Then system asks again: *"Do you want to add coffee"*, operator answers *"Yes"* and so forth.  
-*Pedro:* It's a nightmare, I just want coffee with milk. Why they don't use predefined options: coffee with milk, coffee with sugar and so on.  
-*Eve:* Because it is the raisin of the system: customer can make coffee with any set of ingridients *by yourself*  
-*Pedro:* Okay, let's fix it with Builder pattern.  
+**Pedro:** Need to understand what's the problem exactly?  
+**Eve:** I've researched, system is old, written in *COBOL* and built around expert system *question-answer*. They were very popular long time ago.  
+**Pedro:** What do you mean by *"question-answer"*  
+**Eve:** There is operator in front of terminal. System asks: *"Do yo want to add water?"*, operator answers *"Yes"*. Then system asks again: *"Do you want to add coffee"*, operator answers *"Yes"* and so forth.  
+**Pedro:** It's a nightmare, I just want coffee with milk. Why they don't use predefined options: coffee with milk, coffee with sugar and so on.  
+**Eve:** Because it is the raisin of the system: customer can make coffee with any set of ingridients *by themselves*  
+**Pedro:** Okay, let's fix it with Builder pattern.  
 
 ``` java
 public class Coffee {
@@ -1565,7 +1700,7 @@ public class Coffee {
 }
 ```
 
-*Pedro:* As you see, you can't instantiate `Coffee` class easily, you need to set parameters with nested `Builder` class
+**Pedro:** As you see, you can't instantiate `Coffee` class easily, you need to set parameters with nested `Builder` class
 
 ``` java
 Coffee c = new Coffee.Builder()
@@ -1577,10 +1712,10 @@ Coffee c = new Coffee.Builder()
         .make();
 ```
 
-*Pedro:* Calling to method `make` checks all required parameters, and could validate and throw an exception if object is in inconsistent state.  
-*Eve:* Awesome functionality, but why so verbose?
-*Pedro:* Beat it.
-*Eve:* A piece of cake, clojure supports optional parameters
+**Pedro:** Calling to method `make` checks all required parameters, and could validate and throw an exception if object is in inconsistent state.  
+**Eve:** Awesome functionality, but why so verbose?  
+**Pedro:** Beat it.  
+**Eve:** A piece of cake, clojure supports optional parameters  
 
 ``` clojure
 (defn make-coffee [name amount water
@@ -1594,10 +1729,10 @@ Coffee c = new Coffee.Builder()
              :cinnamon 3)
 ```
 
-*Pedro:* Aha, you have three required parameters and three optionals, but required parameters still without names.  
-*Eve:* What do you mean?  
-*Pedro:* From the client call I see number `15` but I have no idea what it might be.  
-*Eve:* Agreed. Then, let's make all parameters are named and add precondition for required, the same way you do with the builder.
+**Pedro:** Aha, you have three required parameters and three optionals, but required parameters still without names.  
+**Eve:** What do you mean?  
+**Pedro:** From the client call I see number `15` but I have no idea what it might be.  
+**Eve:** Agreed. Then, let's make all parameters are named and add precondition for required, the same way you do with the builder.
 
 ```clojure
 (defn make-coffee
@@ -1616,14 +1751,14 @@ Coffee c = new Coffee.Builder()
              :cinnamon 3)
 ```
 
-*Eve:* As you see all parameters are named and all required params are checked in `:pre` constraint. If constraints are violated `AssertionError` is thrown.  
-*Pedro:* Interesting, `:pre` is a part of a language?  
-*Eve:* Sure, it's just a simple assertion. There is also `:post` constraint, with the similar effect.  
-*Pedro:* Hm, okay. But as you know `Builder` pattern often used as a mutable datastucture, `StringBuilder` for example.  
-*Eve:* It's not a part of clojure philosophy to use mutables, but if you *really* want, no problem.
+**Eve:** As you see all parameters are named and all required params are checked in `:pre` constraint. If constraints are violated `AssertionError` is thrown.  
+**Pedro:** Interesting, `:pre` is a part of a language?  
+**Eve:** Sure, it's just a simple assertion. There is also `:post` constraint, with the similar effect.  
+**Pedro:** Hm, okay. But as you know `Builder` pattern often used as a mutable datastucture, `StringBuilder` for example.  
+**Eve:** It's not a part of clojure philosophy to use mutables, but if you *really* want, no problem.
 Just create a new class with `deftype` and do not forget to use `volatile-mutable` on the properties you want to mutate.  
-*Pedro:* Where is the code?  
-*Eve:* Here is example of custom implementation of mutable `StringBuilder` in clojure. It has a lot of drawbacks and limitations but you've got the idea.
+**Pedro:** Where is the code?  
+**Eve:** Here is example of custom implementation of mutable `StringBuilder` in clojure. It has a lot of drawbacks and limitations but you've got the idea.
 
 ```clojure
 ;; interface
@@ -1653,13 +1788,60 @@ Just create a new class with `deftype` and do not forget to use `volatile-mutabl
 (append sb "Toby Chung") => "Toby Wang Toby Chung"
 ```
 
-*Pedro:* Not as hard as I thought.
+**Pedro:** Not as hard as I thought.
 
-### Episode 14: Facade
+###<div id="facade"/> Episode 14: Facade
 
-> 
+> Our new member **Eugenio Reinn Jr.** commited
+> file with diff in 134 lines to processing servlet.
+> But actual work is just to process request.
+> It MUST be one line commit.
 
-### Episode 15: Singleton
+**Pedro:** Who cares how many lines are committed?
+**Eve:** Someone cares.
+**Pedro:** Let's see where is the problem
+
+``` java
+Response service(Request request) {
+  Timer timer = new Timer();
+  RequestExtractor requestExtractor = RequestExtractorFactory.newCachedRequestExtractor();
+  RequestRaw rawRequest = requestExtractor.extract(request);
+  RequestValidator.validate(rawRequest);
+  RequestValidator.matchSchema(rawRequest, Configuration.getSchema());
+  List<RequestTransformer> transformers = Configuration.getPredefinedRequestTransformers();
+  TransformedRequest tRequest = rawRequest.prepareTransform();
+  for (RequestTransformer rt : transformers) {
+    tRequest = rt.transform(tRequest);
+  }
+  
+  ResponseBuilder respBuilder = ResponseBuilderFactory.newResponseBuilder();
+  Response response = respBuilder.build(tRequest);
+  ResponsePostValidator responseValidator = new ResponsePostvalidator();
+  responseValidator.validateHeaders(response);
+  responseValidator.validateMeta(response);
+  responseValidator.validateContent(response);
+  Logger.log("Request processed in " + timer.elapsed());
+  return response;
+}
+```
+
+**Eve:** Oh shi..  
+**Pedro:** That's the API we provide for them to process reques. Now, I am understand their complains.  
+**Eve:** Let's refactor with...  
+**Pedro:** ...Facade pattern. We resolve all dependencies to a single point of access and simplify API usage.  
+
+``` java
+
+```
+
+###<div id="singleton"/> Episode 15: Singleton
+
+> Global variable, woohoo? Lazy?
+
+###<div id="chain"/> Episode 16: Chain Of Responsibility
+
+> Global variable, woohoo? Lazy?
+
 
 ### Cast
 
@@ -1683,3 +1865,4 @@ and names are just anagrams.
 **Bertie Prayc** - Cyber Pirate  
 **Cristopher, Matton & Pharts** - Important Charts & Reports  
 **Tuck Brass** - Starbucks  
+**Eugenio Reinn Jr.** - Junior Engineer  
