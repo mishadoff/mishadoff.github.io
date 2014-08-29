@@ -1607,7 +1607,7 @@ Coffee c = new Coffee.Builder()
          (> amount 0)
          (> water 0)]}
   ;; definition goes here		 
-
+  )
 
 (make-coffee :name "Royale Coffee"
              :amount 15
@@ -1619,14 +1619,45 @@ Coffee c = new Coffee.Builder()
 *Eve:* As you see all parameters are named and all required params are checked in `:pre` constraint. If constraints are violated `AssertionError` is thrown.  
 *Pedro:* Interesting, `:pre` is a part of a language?  
 *Eve:* Sure, it's just a simple assertion. There is also `:post` constraint, with the similar effect.  
-*Pedro:* Hm, okay. But as you know `Builder` pattern often used as a mutable datastucture, `StringBuilder` for example.
+*Pedro:* Hm, okay. But as you know `Builder` pattern often used as a mutable datastucture, `StringBuilder` for example.  
 *Eve:* It's not a part of clojure philosophy to use mutables, but if you *really* want, no problem.
+Just create a new class with `deftype` and do not forget to use `volatile-mutable` on the properties you want to mutate.  
+*Pedro:* Where is the code?  
+*Eve:* Here is example of custom implementation of mutable `StringBuilder` in clojure. It has a lot of drawbacks and limitations but you've got the idea.
 
 ```clojure
-TODO
+;; interface
+(defprotocol IStringBuilder
+	(append [this s])
+	(to-string [this]))
+
+;; implementation
+(deftype ClojureStringBuilder [charray ^:volatile-mutable last-pos]
+	IStringBuilder
+	(append [this s] 
+	  (let [cs (char-array s)]
+	    (doseq [i (range (count cs))]
+	      (aset charray (+ last-pos i) (aget cs i))))
+	  (set! last-pos (+ last-pos (count s))))
+	(to-string [this] (apply str (take last-pos charray))))
+
+;; clojure binding
+(defn new-string-builder []
+  (ClojureStringBuilder. (char-array 100) 0))
+
+;; usage
+(def sb (new-string-builder))
+(append sb "Toby Wong")
+(to-string sb) => "Toby Wong"
+(append sb " ")
+(append sb "Toby Chung") => "Toby Wang Toby Chung"
 ```
 
+*Pedro:* Not as hard as I thought.
+
 ### Episode 14: Facade
+
+> 
 
 ### Episode 15: Singleton
 
