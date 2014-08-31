@@ -37,17 +37,15 @@ All characters are fake, coincidences are accidental.*
 - [Episode 11. Interpreter](#interpreter)
 - [Episode 12. Flyweight](#flyweight)
 - [Episode 13. Builder](#builder)
-
-- [Episode 14. Facade](#facade) (TODO)
+- [Episode 14. Facade](#facade)
 - [Episode 15. Singleton](#singleton) (TODO)
+- [Episode 16. Chain of responsibility](#chain) 
 
-- Chain of responsibility
-- Singleton
+- [Episode 15. Composite](#composite) 
 - Abstract Factory
 - Factory Method
 - Adapter
 - Bridge
-- Composite
 - Decorator
 - Proxy
 - [Cast](#cast)
@@ -1482,9 +1480,9 @@ String bencodedString = top.interpret();
 BitTorrent.send(bencodedString);
 ```
 
-**Eve:** Interesting, but that is ton of code!
-**Pedro:** We pay readability for capabilities.
-**Eve:** I suppose you've heard concept **Code is Data**, that's a lot easier in clojure
+**Eve:** Interesting, but that is ton of code!  
+**Pedro:** We pay readability for capabilities.  
+**Eve:** I suppose you've heard concept **Code is Data**, that's a lot easier in clojure  
 
 ``` clojure
 ;; multimethod to handle bencode structure
@@ -1520,7 +1518,7 @@ BitTorrent.send(bencodedString);
 ```
 
 **Eve:** You see how it is much easier define specific data?  
-**Pedro:** Sure, and `interpret` it's just a **function** per type, instead of class.
+**Pedro:** Sure, and `interpret` it's just a **function** per bencode type, instead of separate class.
 
 ### <div id="flyweight"/>Episode 12: Flyweight
 
@@ -1795,53 +1793,369 @@ Just create a new class with `deftype` and do not forget to use `volatile-mutabl
 > Our new member **Eugenio Reinn Jr.** commited
 > file with diff in 134 lines to processing servlet.
 > But actual work is just to process request.
+> All other code injection and imports.
 > It MUST be one line commit.
 
-**Pedro:** Who cares how many lines are committed?
-**Eve:** Someone cares.
-**Pedro:** Let's see where is the problem
+**Pedro:** Who cares how many lines are committed?  
+**Eve:** Someone cares.  
+**Pedro:** Let's see where is the problem  
 
 ``` java
-Response service(Request request) {
-  Timer timer = new Timer();
-  RequestExtractor requestExtractor = RequestExtractorFactory.newCachedRequestExtractor();
-  RequestRaw rawRequest = requestExtractor.extract(request);
-  RequestValidator.validate(rawRequest);
-  RequestValidator.matchSchema(rawRequest, Configuration.getSchema());
-  List<RequestTransformer> transformers = Configuration.getPredefinedRequestTransformers();
-  TransformedRequest tRequest = rawRequest.prepareTransform();
-  for (RequestTransformer rt : transformers) {
-    tRequest = rt.transform(tRequest);
+class OldServlet {
+  @Autowired
+  RequestExtractorService requestExtractorService;
+  @Autowired
+  RequestValidatorService requestValidatorService;
+  @Autowired
+  TransformerService transformerService;
+  @Autowired
+  ResponseBuilderService responseBuilderService;
+
+  public Response service(Request request) {
+    RequestRaw rawRequest = requestExtractorService.extract(request);
+    RequestRaw validated = requestValidatorService.validate(rawRequest);
+    RequestRaw transformed = transformerService.transform(validated);
+    Response response = responseBuilderService.buildResponse(transformed);
+    return response;
   }
-  
-  ResponseBuilder respBuilder = ResponseBuilderFactory.newResponseBuilder();
-  Response response = respBuilder.build(tRequest);
-  ResponsePostValidator responseValidator = new ResponsePostvalidator();
-  responseValidator.validateHeaders(response);
-  responseValidator.validateMeta(response);
-  responseValidator.validateContent(response);
-  Logger.log("Request processed in " + timer.elapsed());
-  return response;
 }
 ```
 
-**Eve:** Oh shi..  
-**Pedro:** That's the API we provide for them to process reques. Now, I am understand their complains.  
-**Eve:** Let's refactor with...  
+**Eve:** Oh shi...  
+**Pedro:** That's our internal API for developers, every time they need to process request, inject
+4 services, include all imports, and write this code.  
+**Eve:** Let's refactor it with...  
 **Pedro:** ...Facade pattern. We resolve all dependencies to a single point of access and simplify API usage.  
 
 ``` java
+public class FacadeService {
+  @Autowired
+  RequestExtractorService requestExtractorService;
+  @Autowired
+  RequestValidatorService requestValidatorService;
+  @Autowired
+  TransformerService transformerService;
+  @Autowired
+  ResponseBuilderService responseBuilderService;
 
+  RequestRaw extractRequest(Request req) {
+    return requestExtractorService.extract(req);
+  } 
+  
+  RequestRaw validateRequest(RequestRaw raw) {
+    return requestValidatorService.validate(raw);
+  }
+  
+  RequestRaw transformRequest(RequestRaw raw) {
+    return transformerService.transform(raw);
+  }
+  
+  Response buildResponse(RequestRaw raw) {
+    return responseBuilderService.buildResponse(raw);
+  }
+}
 ```
+
+**Pedro:** Then if you need any service or set of services in the code
+you just injecting facade to your code  
+
+``` java
+class NewServlet {
+  @Autowired
+  FacadeService facadeService;
+
+  Response service(Request request) {
+    RequestRaw rawRequest = facadeService.extractRequest(request);
+    RequestRaw validated = facadeService.validateRequest(rawRequest);
+    RequestRaw transformed = facadeService.transformRequest(validated);
+    Response response = facadeService.buildResponse(transformed);
+    return response;
+  }
+}
+```
+
+**Eve:** Wait, you've just moved all dependencies to one and everytime using this one, correct?  
+**Pedro:** Yes, now everytime some functionality is needed, use `FacadeService`. Dependency is already there.  
+**Eve:** But we did the same in [Mediator](#mediator) pattern?  
+**Pedro:** Mediator is behavioral pattern. We resolved all dependency to Mediator and added *new behavior* to it.  
+**Eve:** And facade?  
+**Pedro:** Facade is structural, we don't add new functionality, we just *expose existing functionality* with facade.  
+**Eve:** Got it. But seems that pattern very loud word for such little tweak.  
+**Pedro:** Maybe.  
+**Eve:** Here is clojure version using structure by namespaces  
+
+``` clojure
+(ns application.old-servlet
+  (:require [application.request-extractor :as re])
+  (:require [application.request-validator :as rv])
+  (:require [application.transformer :as t])
+  (:require [application.response-builder :as rb]))
+
+(defn service [request]
+  (-> request
+      (re/extract)
+      (rv/validate)
+	  (t/transform)
+	  (rb/build)))
+```
+
+**Eve:** Exposing all services via facade.  
+
+``` clojure
+(ns application.facade
+  (:require [application.request-extractor :as re])
+  (:require [application.request-validator :as rv])
+  (:require [application.transformer :as t])
+  (:require [application.response-builder :as rb]))
+
+(defn request-extract [request]
+  (re/extract request))
+
+(defn request-validate [request]
+  (rv/validate request))
+
+(defn request-transform [request]
+  (t/transform request))
+
+(defn response-build [request]
+  (rb/build request))
+```
+
+**Eve:** And use it.  
+
+``` clojure
+(ns application.old-servlet
+  (:use [application.facade]))
+
+(defn service [request]
+  (-> request
+      (request-extract)
+      (request-validate)
+	  (request-transform)
+	  (request-build)))
+```
+
+**Pedro:** What the difference between `:use` and `:require`?  
+**Eve:** They are almost similar, but with `:require` you expose functionality via namespace qualificator
+`(namespace/function)` where with `:use` you can refer to it directly `(function)`  
+**Pedro:** So, `:use` is better.  
+**Eve:** No, be aware of `:use` because it can conflict with existing names in your namespace.  
+**Pedro:** Oh, I see your point. And every time you call `(:use [application.facade])` in some namespace
+all existing functionality from facade is available?  
+**Eve:** Yes.  
+**Pedro:** Pretty the same.  
 
 ###<div id="singleton"/> Episode 15: Singleton
 
-> Global variable, woohoo? Lazy?
+> **Feverro O'Neal** complains that we have a lot of different styles for UI.  
+> Force one per application UI configuration.
+
+**Pedro:** But wait, there was requirement to save UI style per user.  
+**Eve:** Probably it was changed.
+**Pedro:** Ok, then we should just save configuration to `Singleton` and use it from all the places.
+
+``` java
+public final class UIConfiguration {
+  public static final UIConfiguration INSTANCE = new UIConfiguration("ui.config");
+
+  private String backgroundStyle;
+  private String fontStyle;
+  /* other UI properties */
+
+  private UIConfiguration(String configFile) {
+    loadConfig(configFile);
+  }
+
+  private static void loadConfig(String file) {
+    // process file and fill UI properties
+	INSTANCE.backgroundStyle = "black";
+    INSTANCE.fontStyle = "Arial";
+  }
+
+  public String getBackgroundStyle() {
+    return backgroundStyle;
+  }
+
+  public String getFontStyle() {
+    return fontStyle;
+  }
+}
+```
+
+**Pedro:** That way all configuration will be shared across the UIs.  
+**Eve:** Yes, but...why so much code?  
+**Pedro:** We guarantee that only one instance of `UIConfiguration` will exist.  
+**Eve:** Let me ask you: what's the difference between singleton and global varaible.  
+**Pedro:** What?  
+**Eve:** ...the difference between singleton and global variable.  
+**Pedro:** Java does not support global variables.  
+**Eve:** But `UIConfiguration.INSTANCE` is global variable.  
+**Pedro:** Well, sort of.  
+**Eve:** Your code is just simple `def` in clojure.  
+
+``` clojure
+(def ui-config (load-config "ui.config"))
+
+(defn load-config [config-file]
+  ;; process config file and return map with configuratios
+  {:bg-style "black" :font-style "Arial"})
+```
+
+**Pedro:** But, how do you change the style?  
+**Eve:** The same way you will change it in your code.  
+**Pedro:** Uhm... Ok, we need a simple tweak. Make `UIConfiguration.loadConfig` is public and
+call it when the configuration changes.  
+**Eve:** Then we make `ui-config` an atom and call `swap!` when configuration changes.  
+**Pedro:** But atoms are useful only in concurrent environment.  
+**Eve:** First, yes, they useful, but NOT only in concurrent environment.
+Second, atom read is not as slow as you think. Third, it changes the state of
+UI configuration *atomically*
+**Pedro:** It is redundant for such simple example.  
+**Eve:** No, it is not. There is a posibility that UI configuration changes
+and some renders read new `backgroundStyle`, but old `fontStyle`
+**Pedro:** Ok, use `synchronized` for `loadConfig`
+**Eve:** Then you must use `synchonized` on getters as well, it is slow.
+**Pedro:** There is still *Double-Checked Locking* idiom
+**Eve:** Double-checked locking is clever but [broken](http://www.javaworld.com/article/2074979/java-concurrency/double-checked-locking--clever--but-broken.html)
 
 ###<div id="chain"/> Episode 16: Chain Of Responsibility
 
-> Global variable, woohoo? Lazy?
+> **"A Profit NY"** organization opened request to
+> filter profanity words from their chat system.
 
+**Pedro:** Fuck, they don't like the word "*fuck*"?  
+**Eve:** It is profit organization, they lose money if someone use
+profanity words in public chat.  
+**Pedro:** Who defined profanity words list?  
+**Eve:** [George Carlin](https://www.youtube.com/watch?v=5ssJtD08vCc)  
+
+*Watching and laughing*
+
+**Pedro:** Ok, so let's just add a filter to replace these rude words with the asterisks.  
+**Eve:** Make sure your solution is extendable, other filters could be applied.  
+**Pedro** Chain of Responisibility seems like a good pattern candidate for that.
+First of all we make some abstract filter.
+
+``` java
+public abstract class Filter {
+  protected Filter nextFilter;
+
+  abstract void process(String message);
+
+  public void setNextFilter(Filter nextFilter) {
+    this.nextFilter = nextFilter;
+  }
+}
+```
+
+**Pedro:** Then, provide implementation for each specific filter you want to apply
+
+``` java
+class LogFilter extends Filter {
+  @Override
+  void process(String message) {
+    Logger.info(message);
+    if (nextFilter != null) nextFilter.process(message);
+  }
+}
+
+class ProfanityFilter extends Filter {
+  @Override
+  void process(String message) {
+    String newMessage = message.replaceAll("fuck", "f*ck");
+    if (nextFilter != null) nextFilter.process(newMessage);
+  }
+}
+
+class RejectFilter extends Filter {
+  @Override
+  void process(String message) {
+    System.out.println("RejectFilter");
+    if (message.startsWith("[A PROFIT NY]")) {
+      if (nextFilter != null) nextFilter.process(message);
+    } else {
+      // reject message - do not propagate processing
+    }
+  }
+}
+
+class StatisticsFilter extends Filter {
+  @Override
+  void process(String message) {
+    Statistics.addUsedChars(message.length());
+    if (nextFilter != null) nextFilter.process(message);
+  }
+}
+```
+
+**Pedro:** And finally build a chain of filters which defines an order how message will be processed.
+
+``` java
+Filter rejectFilter = new RejectFilter();
+Filter logFilter = new LogFilter();
+Filter profanityFilter = new ProfanityFilter();
+Filter statsFilter = new StatisticsFilter();
+
+rejectFilter.setNextFilter(logFilter);
+logFilter.setNextFilter(profanityFilter);
+profanityFilter.setNextFilter(statsFilter);
+
+String message = "[A PROFIT NY] What the fuck?";
+rejectFilter.process(message);
+```
+
+**Eve:** Ok, now clojure turn. Just define each filter as a function.
+
+``` clojure
+;; define filters
+
+(defn log-filter [message]
+  (logger/log message)
+  message)
+
+(defn stats-filter [message]
+  (stats/add-used-chars (count message))
+  message)
+
+(defn profanity-filter [message]
+  (clojure.string/replace message "fuck" "f*ck"))
+
+(defn reject-filter [message]
+  (if (.startsWith message "[A Profit NY]")
+    message))
+```
+
+**Eve:** And use `some->` macro to chain filters
+
+``` clojure
+(defn chain [message]
+  (some-> message
+          reject-filter
+          log-filter
+          stats-filter
+          profanity-filter))
+```
+
+**Eve:** You see how much it is easier, you don't need every-time call
+`if (nextFilter != null) nextFilter.process()`, because it's natural.
+The next filter defined at the `some->` level instead of case where each filter knows who's next.  
+**Pedro:** That's definitely better for composability, but why did you use `some->` instead of `->`?  
+**Eve:** Just for `reject-filter`. It could stop further processing, so `some->` returns `nil` as soon
+as `nil` encountered as a filter  
+**Pedro:** Could you explain more?  
+**Eve:** Look at the usage  
+
+``` clojure
+(chain "fuck") => nil
+(chain "[A Profit NY] fuck") => "f*ck"
+```
+
+**Pedro:** Understood.  
+**Eve:** *Chain of Responsibility* just an approach to **function composition**  
+
+###<div id="composite"/> Episode 17: Composite
+
+> Compositor
 
 ### Cast
 
@@ -1866,3 +2180,5 @@ and names are just anagrams.
 **Cristopher, Matton & Pharts** - Important Charts & Reports  
 **Tuck Brass** - Starbucks  
 **Eugenio Reinn Jr.** - Junior Engineer  
+**Feverro O'Neal** - Forever Alone  
+**A Profit NY** - Profanity  
