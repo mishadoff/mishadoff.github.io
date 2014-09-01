@@ -41,9 +41,9 @@ All characters are fake, coincidences are accidental.*
 - [Episode 15. Singleton](#singleton) (TODO)
 - [Episode 16. Chain of Responsibility](#chain) 
 - [Episode 17. Composite](#composite) 
+- [Episode 18. Factory Method](#factory_method)
+- [Episode 19. Abstract Factory](#abstract_factory)
 
-- Abstract Factory
-- Factory Method
 - Adapter
 - Bridge
 - Decorator
@@ -2258,6 +2258,187 @@ page.render();
 **Eve:** No, you define the whole tree with one datastructure and use one function to operate on oi.  
 **Pedro:** Anyway, let's move forward.  
 
+###<div id="factory_method"/> Episode 17. Factory Method
+
+> **Sir Dry Bang** suggest to create new levels for their popular
+> game. More levels - more money.
+
+**Pedro:** How can we create new levels?  
+**Eve:** Just change assets and add new blocks: paper, wood, iron...  
+**Pedro:** It's too silly, isn't it?  
+**Eve:** The whole game is too silly. If user pay for color hats for their characters, then they will pay for wooden blocks as well.  
+**Pedro:** I think it's a crap, but anyway, let's make `MazeBuilder` generic and add specific builder
+for each type of the block. It's a Factory Method pattern.  
+
+``` java
+class Maze { }
+class WoodMaze extends Maze { }
+class IronMaze extends Maze { }
+
+interface MazeBuilder {
+  Maze build();
+}
+
+class WoodMazeBuilder {
+  @Override
+  Maze build() {
+    return new WoodMaze();
+  }
+}
+
+class IronMazeBuilder {
+  @Override
+  Maze build() {
+    return new IronMaze();
+  }
+}
+```
+
+**Eve:** Isn't it obvious that IronMazeBuilder will return IronMazes?  
+**Pedro:** Not for program. But see, to make a maze from another blocks we just change implementation responsible for block creation.  
+
+``` java
+MazeBuilder builder = new WoodMazeBuilder();
+Maze maze = builder.build();
+```
+
+**Eve:** I've seen something similar before.  
+**Pedro:** What exactly?  
+**Eve:** For me it seems like a strategy or state pattern.  
+**Pedro:** No way! Strategy is about performing specific operations and factory is for creating specific object.  
+**Eve:** But create is an operation as well.  
+
+``` clojure
+(defn maze-builder [maze-fn])
+
+(defn make-wood-maze [])
+(defn make-iron-maze [])
+
+(def wood-maze-builder (partial maze-builder make-wood-maze))
+(def iron-maze-builder (partial maze-builder make-iron-maze))
+```
+
+**Pedro:** Hm, seems similar.  
+**Eve:** I mean it.  
+
+###<div id="abstract_factory"/> Episode 19: Abstract Factory
+
+> Users are not buying new levels in the game.
+> **Saimank Gerr** build a complains cloud and the most popular
+> negative feedback words are: "ugly", "crap" and "shit".
+>
+> Improve levels-building system.
+
+**Pedro:** I said this is crap.  
+**Eve:** Sure, snow background with wooden walls, space invaders with wooden walls every setting with wooden walls.  
+**Pedro:** Then we must separate game worlds and build a set of specific objects for particular world.  
+**Eve:** Explain.  
+**Pedro:** Instead of using Factory Method for building specific blocks, we use Abstract Factory
+to build a set of related objects, to make a level look less crappy.  
+**Eve:** Example would be good.  
+**Pedro:** Code is my example. First we define *abstract* behaviour of level factory  
+
+``` java
+public interface LevelFactory {
+  Wall buildWall();
+  Back buildBack();
+  Enemy addEnemy();
+}
+```
+
+**Pedro:** Then we have a hierarchy of objects that level consists of  
+
+``` java
+class Wall {}
+class PlasmaWall extends Wall {}
+class StoneWall extends Wall {}
+
+class Back {}
+class StarsBack extends Back {}
+class EarthBack extends Back {}
+
+class Enemy {}
+class UFOSoldier extends Enemy {}
+class WormScout extends Enemy {}
+```
+
+**Pedro:** See? We have a specific object for each level, let's create factory for them.  
+
+``` java
+class SpaceLevelFactory implements LevelFactory {
+  @Override
+  public Wall buildWall() {
+    return new PlasmaWall();
+  }
+
+  @Override
+  public Back buildBack() {
+    return new StarsBack();
+  }
+
+  @Override
+  public Enemy addEnemy() {
+    return new UFOSoldier();
+  }
+}
+
+class UndergroundLevelFactory implements LevelFactory {
+  @Override
+  public Wall buildWall() {
+    return new StoneWall();
+  }
+
+  @Override
+  public Back buildBack() {
+    return new EarthBack();
+  }
+
+  @Override
+  public Enemy addEnemy() {
+    return new WormScout();
+  }
+}
+```
+
+**Pedro:** Each implementation of level factory creates related objects for level.
+Levels will look less crappy for sure.  
+**Eve:** Let me understand. I really can't spot the difference.  
+**Pedro:** Factory Method *defers object creation to a subclasses*,
+Abstract Factory do the same but for a *set of related object*.  
+**Eve:** Aha, that means I need to pass **set of related functions** to abstract builder  
+
+``` clojure
+(defn level-factory [wall-fn back-fn enemy-fn])
+
+(defn make-stone-wall [])
+(defn make-plasma-wall [])
+
+(defn make-earth-back [])
+(defn make-stars-back [])
+
+(defn make-worm-scout [])
+(defn make-ufo-soldier [])
+
+(def underground-level-factory
+  (partial level-factory
+           make-stone-wall
+           make-earth-back
+           make-worm-scout))
+
+(def space-level-factory
+  (partial level-factory
+           make-plasma-wall
+           make-stars-back
+           make-ufo-soldier))
+```
+
+**Pedro:** I knew.  
+**Eve:** Everything is fair. Your lovely "set of related Xs", where X is a function  
+**Pedro:** Yes, clarify, what `partial` is.  
+**Eve:** Provide some parameters for function. So, `underground-level-factory` knows how to construct walls, backs and enemies. Everything other *inherited* from abstract `level-factory` function.  
+**Pedro:** Handy.  
+
+### Episode 20.
 
 ### Cast
 
@@ -2285,3 +2466,5 @@ and names are just anagrams.
 **Feverro O'Neal** - Forever Alone  
 **A Profit NY** - Profanity  
 **Bella Hock** - Black Hole
+**Sir Dry Bang** - Angry Birds
+**Saimank Gerr** - Risk Manager
