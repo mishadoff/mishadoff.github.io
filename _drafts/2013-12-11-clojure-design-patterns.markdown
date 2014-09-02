@@ -43,10 +43,10 @@ All characters are fake, coincidences are accidental.*
 - [Episode 17. Composite](#composite) 
 - [Episode 18. Factory Method](#factory_method)
 - [Episode 19. Abstract Factory](#abstract_factory)
+- [Episode 20. Decorator](#decorator)
+- [Episode 21. Adapter](#adapter)
 
-- Adapter
 - Bridge
-- Decorator
 - Proxy
 - [Cast](#cast)
 
@@ -2342,7 +2342,7 @@ to build a set of related objects, to make a level look less crappy.
 public interface LevelFactory {
   Wall buildWall();
   Back buildBack();
-  Enemy addEnemy();
+  Enemy buildEnemy();
 }
 ```
 
@@ -2377,7 +2377,7 @@ class SpaceLevelFactory implements LevelFactory {
   }
 
   @Override
-  public Enemy addEnemy() {
+  public Enemy buildEnemy() {
     return new UFOSoldier();
   }
 }
@@ -2394,7 +2394,7 @@ class UndergroundLevelFactory implements LevelFactory {
   }
 
   @Override
-  public Enemy addEnemy() {
+  public Enemy buildEnemy() {
     return new WormScout();
   }
 }
@@ -2438,7 +2438,132 @@ Abstract Factory do the same but for a *set of related object*.
 **Eve:** Provide some parameters for function. So, `underground-level-factory` knows how to construct walls, backs and enemies. Everything other *inherited* from abstract `level-factory` function.  
 **Pedro:** Handy.  
 
-### Episode 20.
+###<div id="adapter"/> Episode 20: Adapter
+
+> **Deam Evil** conducts a medieval tournament for knights.
+> The prize is $100.000
+>
+> I'll pay you the half if you break the system and allow
+> my armed commando to take part in competition.
+
+**Pedro:** Finally we've got interesting work.  
+**Eve:** Funny to see the competition. Especially, M16 vs Iron Sword part.  
+**Pedro:** Knights have a good armor.  
+**Eve:** F1 grenade *does not care* about armor.  
+**Pedro:** Nevermind, we do the work, we get the money.  
+**Eve:** Fifty grands - nice compensation  
+**Pedro:** Yes, look at this, I've stolen sources of the competition system,
+though it is not possible to modify their sources, we can find some vulneravility.  
+**Eve:** Here it is  
+
+``` java
+public interface Tournament {
+  void accept(Knight knight);
+}
+```
+
+**Pedro:** Aha! System validates only incoming types via `Knight` interface.
+All we need to do is *to adapt* commando to be a knight. Let's see how knight look like  
+
+``` java
+interface Knight {
+  void attackWithSword();
+  void attackWithBow();
+  void blockWithShield();
+}
+
+class Galahad implements Knight {
+  @Override
+  public void blockWithShield() {
+    winkToQueen();
+    take(shield);
+    block();
+  }
+
+  @Override
+  public void attackWithBow() {
+    winkToQueen();
+    take(bow);
+    attack();
+  }
+
+  @Override
+  public void attackWithSword() {
+    winkToQueen();
+    take(sword);
+    attack();
+  }
+}
+```
+
+**Pedro:** To accept the commando let's take an old implementation  
+
+``` java
+class Commando {
+    void throwGrenade(String grenade) { }
+    shot(String rifleType) { }
+}
+```
+
+**Pedro:** And adapt it.  
+
+``` java
+class Commando implements Knight {
+  @Override
+  public void blockWithShield() {
+    // commando don't block
+  }
+
+  @Override
+  public void attackWithBow() {
+    throwGrenade("F1");
+  }
+
+  @Override
+  public void attackWithSword() {
+    shotWithRifle("M16");
+  }
+}
+```
+
+**Pedro:** That's it.  
+**Eve:** It's simpler in clojure.  
+**Pedro:** Really?  
+**Eve:** We don't love types so their validation won't work at all  
+**Pedro:** So, how do you replace knight with commando?  
+**Eve:** Basically, what knight is? It's a map, consists of data and behaviour  
+
+``` clojure
+{:name "Lancelot"
+ :speed 1.0
+ :attack-bow-fn attack-with-bow
+ :attack-sword-fn attack-with-sword
+ :block-fn block-with-shield}
+```
+
+**Eve:** To adapt commando, just pass his functions instead original ones  
+
+``` clojure
+{:name "Commando"
+ :speed 5.0
+ :attack-bow-fn (partial throw-grenade "F1")
+ :attack-sword-fn (partial shot "M16")
+ :block-fn nil}
+```
+
+**Pedro:** How did we share money?  
+**Eve:** 50/50  
+**Pedro:** I wrote more code, I want 70  
+**Eve:** Ok, 70/70  
+**Pedro:** Deal.  
+
+###<div id="decorator"/> Episode 21: Decorator
+
+>
+
+###<div id="bridge"/> Episode 22: Bridge
+
+###<div id="proxy"/> Episode 23: Proxy
 
 ### Cast
 
@@ -2465,6 +2590,7 @@ and names are just anagrams.
 **Eugenio Reinn Jr.** - Junior Engineer  
 **Feverro O'Neal** - Forever Alone  
 **A Profit NY** - Profanity  
-**Bella Hock** - Black Hole
-**Sir Dry Bang** - Angry Birds
-**Saimank Gerr** - Risk Manager
+**Bella Hock** - Black Hole  
+**Sir Dry Bang** - Angry Birds  
+**Saimank Gerr** - Risk Manager  
+**Deam Evil** - Medieval
