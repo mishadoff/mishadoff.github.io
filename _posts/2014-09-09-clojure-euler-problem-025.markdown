@@ -43,3 +43,7 @@ To solve the problem use the most straightforward approach and you'll find the a
 ```
 
 [Code](https://github.com/mishadoff/project-euler/blob/master/src/project_euler/problem025.clj)
+
+**P.S.** If you followed all posts upto this one, then you have 25 problems solved, level 1 and nice badge
+
+![](https://projecteuler.net/images/levels/level_1.png)
