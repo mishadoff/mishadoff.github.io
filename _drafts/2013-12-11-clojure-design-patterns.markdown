@@ -2559,7 +2559,28 @@ class Commando implements Knight {
 
 ###<div id="decorator"/> Episode 21: Decorator
 
->
+> **Eavesdropper** caught us on cheating for the tournament.
+> We have a choice: to be busted by police or to help
+> his super knight to become in competition
+
+**Pedro:** I don't wanna go to prison.
+**Eve:** Me either.
+**Pedro:** Let's cheat for him one more time.
+**Eve:** This is the same solution, isn't it?
+**Pedro** Similar, but not the same.
+Commando was a soldier and they are not allowed on the tournament. We adapted it.
+But knight is allowed for tournament we don't need to adapt it, we add functionality to existing object.
+**Eve:** Inheritance or composition?
+**Pedro:** Composition, the main goal of decorator to change behaviour at a runtime
+
+``` java
+
+```
+
+
+``` clojure
+
+```
 
 ###<div id="bridge"/> Episode 22: Bridge
 
@@ -2593,4 +2614,7 @@ and names are just anagrams.
 **Bella Hock** - Black Hole  
 **Sir Dry Bang** - Angry Birds  
 **Saimank Gerr** - Risk Manager  
-**Deam Evil** - Medieval
+**Deam Evil** - Medieval  
+** ** - Eavesdropper  
+
+http://google.com
