@@ -65,27 +65,24 @@ Video overview of the main Solr features from its creator.
 If you do not know anything about distibuted systems (*like me*) this intro could be helpful.
 Just make sure you have *few* hours for reading. 
 
-### 6. [Introduction to Parallel Computing](https://computing.llnl.gov/tutorials/parallel_comp/)
+### 6. [Predicting the next Math.random() in Java](http://franklinta.com/2014/08/31/predicting-the-next-math-random-in-java/)
 
-TODO
+Do you still trust to your random distribution?
 
-### 7. [Predicting the next Math.random() in Java](http://franklinta.com/2014/08/31/predicting-the-next-math-random-in-java/)
+The article discusses how Java `Random` could be 100% predicted after the first generated number.
 
-You still trust to your random?
-The article discusses how random could be 100% predicted after first generated number
+For *true randomness* use [java client](https://github.com/mishadoff/randomorg) for [random.org](http://random.org)
 
-TODO randomorg
+### 7. [So You Want To Write Your Own CSV code?](http://tburette.github.io/blog/2014/05/25/so-you-want-to-write-your-own-CSV-code/)
 
-There is a [randomorg]() library you can use for *true* random
+Recently, we discussed with colleague how write parser for `csv`. Really, `String.split(",")` is far from enough.
 
-### 8. [So You Want To Write Your Own CSV code?](http://tburette.github.io/blog/2014/05/25/so-you-want-to-write-your-own-CSV-code/)
+Article just a set of questions you must answer if you are writing production-ready csv-parser.
 
-TODO Discussed with colleague
+> Use a solid library.
 
-### 9. [Hacking Hearthstone with machine learning](http://www.elie.net/blog/hearthstone/i-am-a-legend-hacking-hearthstone-with-machine-learning-defcon-talk-wrap-up)
+### 8. []()
 
-TODO
+### 9. []()
 
-### 10. [The 6 built-in JDK tools the average developer should learn to use more](http://zeroturnaround.com/rebellabs/the-6-built-in-jdk-tools-the-average-developer-should-learn-to-use-more/)
-
-TODO
+### 10. []()
