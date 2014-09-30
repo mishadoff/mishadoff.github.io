@@ -2561,7 +2561,7 @@ class Commando implements Knight {
 
 > **Eavesdropper** caught us on cheating for the tournament.
 > We have a choice: to be busted by police or to help
-> his super knight to become in competition
+> his super knight to take part in competition
 
 **Pedro:** I don't wanna go to prison.
 **Eve:** Me either.
