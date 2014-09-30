@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "ClojureCup 2014: Impressions"
-date: 2014-09-30 15:21
+date: 2014-09-31 00:30
 comments: true
 categories: [clojure, clojurecup, programming]
 sharing: true
