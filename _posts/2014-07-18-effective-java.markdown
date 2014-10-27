@@ -534,7 +534,7 @@ with bitwise operations efficiently (`apply(STYLE_ITALIC | STYLE_BOLD)`)
 
 ### Item 57: Use exceptions only for exceptional conditions
 
-- Exceptions slower than mormal checks
+- Exceptions slower than normal checks
 - Placing code inside a try-catch block inhibits certain optimizations that modern JVM implementations might otherwise perform
 - A well-designed API must not force its clients to use exceptions for ordinary control flow
 
