@@ -100,7 +100,7 @@ Use `@Override` annotation to be safe.
 - The worst possible legal hash function `return 42`
 - Bad hashcode could degrade performance in hash-based collections
 - Hashcode could be cached for immutable classes
-- Do not try to develop your own `state-of-the-art` hash function unless you are a matematician
+- Do not try to develop your own `state-of-the-art` hash function unless you are a mathematician
 
 ### Item 10: Always override toString
 
