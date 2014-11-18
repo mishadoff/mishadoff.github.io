@@ -47,7 +47,7 @@ And `b` is also divisior of `n`. Little transformation gives us `a * b = n`. Ass
 Number `n` is not prime. Maximum value of a achieved when `a` equals to `b`, `a^2 = n`, `a = sqrt(n)`.
 This is reduce complexity of algorithm from `O(n)` to `O(sqrt(n))`.
 
-In [previous problem](http://mishadoff.github.com/blog/clojure-euler-problem-002/) we mentioned `clojure.contrib.lazy-seqs` package,
+In [previous problem](/blog/clojure-euler-problem-002/) we mentioned `clojure.contrib.lazy-seqs` package,
 where we have primes lazy sequence. Let's use it!
 
 Algorithm for solving our problem is following:
