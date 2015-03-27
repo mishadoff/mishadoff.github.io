@@ -72,6 +72,10 @@ task :post do
     post.puts "sharing: true"
     post.puts "published: false"
     post.puts "---"
+    post.puts ""
+    post.puts "Excerpt"
+    post.puts ""
+    post.puts "<!-- more -->"
   end
 end # task :post
 
