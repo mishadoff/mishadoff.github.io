@@ -840,6 +840,7 @@ Result
 ╚══════════╩════════════════════╝
 ```
 
+![](http://i.imgur.com/avWNFpg.jpg)
 
 Congratulations, we've found top 3 bourbons in Iowa using Clojure and Spark.
 
