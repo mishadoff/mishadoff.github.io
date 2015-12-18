@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Clojure Design Patterns"
-date: 2015-12-18 11:34
+date: 2015-12-18 11:20
 comments: true
 categories: [clojure, programming, java, story, patterns]
 published: true
