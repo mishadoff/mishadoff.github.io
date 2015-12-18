@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Clojure Design Patterns"
-date: 2014-08-29 00:09
+date: 2015-12-18 11:34
 comments: true
 categories: [clojure, programming, java, story, patterns]
 published: true
@@ -15,12 +15,7 @@ published: true
 we use dynamic typing, functional programming and, of course,
 Clojure. Some of them look wrong and ugly. It's okay.
 All characters are fake, coincidences are accidental.*
-
-> Our programming language is fucked up.  
-> That's why we need design patterns.
->
-> -- Anonymous
-
+	
 ### Index
 
 - [Intro](#intro)
@@ -38,29 +33,35 @@ All characters are fake, coincidences are accidental.*
 - [Episode 12. Flyweight](#flyweight)
 - [Episode 13. Builder](#builder)
 - [Episode 14. Facade](#facade)
-- [Episode 15. Singleton](#singleton) (TODO)
+- [Episode 15. Singleton](#singleton)
 - [Episode 16. Chain of Responsibility](#chain) 
 - [Episode 17. Composite](#composite) 
 - [Episode 18. Factory Method](#factory_method)
 - [Episode 19. Abstract Factory](#abstract_factory)
-- [Episode 20. Decorator](#decorator)
-- [Episode 21. Adapter](#adapter)
-
-- Bridge
-- Proxy
+- [Episode 20. Adapter](#adapter)
+- [Episode 21. Decorator](#decorator)
+- [Episode 22. Proxy](#proxy)
+- [Episode 23. Bridge](#bridge) 
+- [Cheatsheet](#cheatsheet)
 - [Cast](#cast)
 
 ### <div id="intro"/>Intro
 
+> Our programming language is fucked up.  
+> That's why we need design patterns.
+>
+> -- Anonymous
+
 Two modest programmers **Pedro Veel** and **Eve Dopler**
-solving software engineering problems and
+are solving common software engineering problems and
 applying design patterns.
 
 ### <div id="command"/>Episode 1. Command
 
 > Leading IT service provider **"Serpent Hill & R.E.E"**
 > acquired new project for USA customer.
-> First delivery is a register, login and logout functionality.
+> First delivery is a register, login and logout functionality
+> for their brand new site.
 
 **Pedro:** Oh, that's easy. You just need a Command interface...  
 
@@ -70,7 +71,7 @@ interface Command {
 }
 ```
 
-**Pedro:** Every action should implement it and define `execute` behaviour.
+**Pedro:** Every action should implement this interface and define specific `execute` behaviour.
 
 ``` java
 public class LoginCommand implements Command {
@@ -114,8 +115,8 @@ public class LogoutCommand implements Command {
 ```
 
 **Pedro:** What do you think, Eve?  
-**Eve:** Why are you using redundant wrapping and just don't call `DB.login`?  
-**Pedro:** It's important to wrap here, because now we can preserve `Command` objects.  
+**Eve:** Why are you using redundant wrapping into `LoginCommand` and just don't call `DB.login`?  
+**Pedro:** It's important to wrap here, because now we can operate on generic `Command` objects.  
 **Eve:** For what purpose?  
 **Pedro:** Delayed call, logging, history tracking, caching, plenty of usages.  
 **Eve:** Ok, how about that?  
@@ -172,7 +173,7 @@ new SomeInterfaceWithOneMethod() {
 
 **Pedro:** Ha, just call `Collections.sort(users, comparator)`
 with custom comparator.  
-**Eve:** How would you implement it?  
+**Eve:** How would you implement *custom comparator*?  
 **Pedro:** You need to take `Comparator` interface
 and provide implementation for `compare(Object o1, Object o2)` method.
 Also you need another implementation for `ReverseComparator`  
@@ -247,7 +248,7 @@ Collections.sort(users, new ReverseSubsComparator());
 *10 minutes later*  
 
 **Pedro:** Very doubtful approach to pass strategy.  
-**Eve:** I don't care, **Strategy is just a function passed to another function.**  
+**Eve:** I don't care, because Strategy is just a **function passed to another function.**  
 
 ### <div id="state"/>Episode 3. State
 
@@ -259,8 +260,8 @@ Collections.sort(users, new ReverseSubsComparator());
 **Eve:** Let's clarify them.  
 
 - *If user has subscription show him all news in a feed*
-- *Otherwise, show him recent 10 news*
-- *If he pays money, add them to his account balance*
+- *Otherwise, show him only recent 10 news*
+- *If he pays money, add the amount to his account balance*
 - *If user doesn't have subscription and there is enough money
 to buy subscription, change his state to...*
 
@@ -321,9 +322,8 @@ user.newsFeed(); // show him all news
 **Eve:** You just hide value that affects behaviour inside `User` object. We could use strategy to pass it directly `user.newsFeed(subscriptionType)`.  
 **Pedro:** Agreed, State is very close to the Strategy.
 They even have the same UML diagrams. but we encapsulate balance and bind it to user.  
-**Eve:** I think it achieves the same goal using another mechanism,
-from clojure perspective it can be implemented
-the same way as strategy pattern. **It is just a first-class function**.  
+**Eve:** I think it achieves the same goal using another mechanism. Instead of providing strategy explicitly, it depends on some state. From clojure perspective it can be implemented
+the same way as strategy pattern.  
 **Pedro:** But successive calls can change object's state.  
 **Eve:** Correct, but it has nothing to do with `Strategy` it is just implementation detail.  
 **Pedro:** What about "another mechanism"?  
@@ -374,8 +374,8 @@ the same way as strategy pattern. **It is just a first-class function**.
 ### <div id="visitor"/>Episode 4. Visitor
 
 > **Natanius S. Selbys** suggested to implement functionality
-> allows users export their messages, activities and achievements
-> in different formats.
+> which allows users export their messages, activities
+> and achievements in different formats.
 
 **Eve:** So, how do you plan to do it?  
 **Pedro:** We have one hierarchy for item types
@@ -584,13 +584,13 @@ you don't need Visitor pattern**?
 
 ### <div id="template_method"/>Episode 5. Template Method
 
-> MMORPG **Mech Dominore Fight Saga** requested a game bot
-> for their VIP users. Not fair.
+> MMORPG **Mech Dominore Fight Saga** requested to implement
+> a game bot for their VIP users. Not fair.
 
 **Pedro:** First, we must decide what actions 
 should be automated with bot.  
 **Eve:** Have you ever played RPG?  
-**Pedro:** Forntunately, no  
+**Pedro:** Fortunately, no  
 **Eve:** Oh my... Let's go, I'll show you...  
 
 *2 weeks later*
@@ -601,11 +601,11 @@ should be automated with bot.
 
 - Battle
 - Quest
-- Opening Chest
+- Open Chest
 
 **Pedro:** Characters behave differently in
 different events, for example mages cast spells in battle,
-but rogues prefer silent melee combat, locked chests are skipped
+but rogues prefer silent melee combat; locked chests are skipped
 by most characters, but rogues can unlock them, etc.  
 **Eve:** Looks like ideal candidate for `Template Method`?  
 **Pedro:** Yes. We define abstract algorithm, and then specify
@@ -737,15 +737,15 @@ and pass as an argument.
 (defn move-to [character location
                & {:keys [handle-chest attack]
                   :or {handle-chest (fn [chest])
-                       attack (fn [enemies]
-                                (run-away))}}]
-;; previous implementation
+                       attack (fn [enemies] (run-away))}}]
+  ;; previous implementation
 )
 ```
 
 **Pedro:** OMG, what's happening there?  
 **Eve:** We changed signature of `move-to` to accept
 `handle-chest` and `attack` functions.  
+Think of them like optional parameters.  
 
 ``` clojure
 (move-to character location
@@ -790,7 +790,7 @@ has no mana, so instead of trying to cast fireballs, he can just teleport and ru
 > Technical consultant **Kent Podiololis**
 > complains for C-style loops usage.
 >
-> "Are we in 1980 or what?"
+> "Are we in 1980 or what?" -- Kent
 
 **Pedro:** We definitely should use pattern Iterator from java.  
 **Eve:** Don't be fool, nobody's using `java.util.Iterator`  
@@ -841,8 +841,8 @@ while (next != null) {
 ```
 
 **Pedro:** It returns a list...  
-**Eve:** Because **Iterator is just a list**  
-**Pedro:** But is it possible to make `seq` works on custom datastructures?  
+**Eve:** Sequence, because **Iterator is just a sequence**  
+**Pedro:** Is it possible to make `seq` works on custom datastructures?  
 **Eve:** Implement `clojure.lang.Seqable` interface  
 
 ``` clojure
@@ -853,9 +853,21 @@ while (next != null) {
 	))
 ```
 
-**Pedro:** Fine then.
+**Pedro:** Fine then. But I've heard iterator is often used to achive *laziness*, for example
+to calculate value only during `getNext()` call, how list handle that?  
+**Eve:** List can be lazy as well, clojure calls such list *"lazy sequence"*.  
 
-### Episode 7: Memento
+``` clojure
+(def natural-numbers (iterate inc 1))
+```
+
+**Eve:** We defined thing to represent *ALL* natural numbers, but we haven't got `OutOfMemory` yet,
+because we haven't requested any value. It's lazy.  
+**Pedro:** Could you explain more?  
+**Eve:** Unfortunately, I am too lazy for that.  
+**Pedro:** I will remember that!  
+
+### <div id="memento"/>Episode 7: Memento
 
 > User **Chad Bogue** lost the message he was writing
 > for two days. Implement save button for him.
@@ -899,7 +911,7 @@ public class TextBox {
 }
 ```
 
-**Pedro:** Memento is just immutable object  
+**Pedro:** Memento is just an immutable object  
 
 ``` java
 public final class Memento {
@@ -941,7 +953,7 @@ textbox.restore(checkpoint1);
 ```
 
 **Pedro:** Just a note if you want a multiple checkpoints, save memento's to the list.  
-**Eve:** Looks as a bunch of nouns, but actually it's all about two functions `save` and `restore`.  
+**Eve:** *Originator*, *caretaker*, *memento* - looks as a bunch of nouns, but actually it's all about two functions `save` and `restore`.  
 
 ``` clojure
 (def textbox (atom {}))
@@ -1206,8 +1218,8 @@ for *saving users* and *sending messages*
 (send-message {:name "Joe"} "Toby?")
 ```
 
-**Pedro:** Good enough.
-**Eve:** Nothing interesing here.
+**Pedro:** Good enough.  
+**Eve:** Nothing interesing here, because it is just a one approach **to reduce coupling**.
 
 ### <div id="observer"/>Episode 10: Observer
 
@@ -1340,7 +1352,9 @@ dynamically.
 ```
 
 **Pedro:** It's a pretty the same way?  
-**Eve:** Yeah, but there is one improvement using watches.
+**Eve:** Yeah, in fact observer is just a way to register **function, which will be called after another function**.  
+**Pedro:** It is still the pattern.  
+**Eve** Sure, but we can improve solution a bit using clojure watches.
 
 ``` clojure
 (add-watch
@@ -1352,7 +1366,7 @@ dynamically.
 ```
 
 **Pedro:** Why is that better?  
-**Eve:** First of all, our `add-money` function is clean, it just adds money. Also, watcher tracks *every* change to the state, not the ones we handle in mutator functions, like `add-money`
+**Eve:** First of all, our `add-money` function is clean, it just adds money. Also, watcher tracks *every* change to the state, not the ones we handle in mutator functions, like `add-money`  
 **Pedro:** Explain please.  
 **Eve:** If there is provided another secred method `secret-add-money` for changing balance, watchers will handle that as well.  
 **Pedro:** That's awesome!  
@@ -1471,6 +1485,7 @@ mainStructure.put(new StringElement("preffered_categories"),
                       new ListElement(Arrays.asList(
                           new StringElement("porn"),
                           new StringElement("murder"),
+                          new StringElement("scala"),
                           new StringElement("pokemons")
                       )));
 BencodeElement top = new DictionaryElement(mainStructure);
@@ -1512,13 +1527,15 @@ BitTorrent.send(bencodedString);
             "number_of_downloaded_torrents" 623
 			"number_of_uploaded_torrent" 0
 			"donation_in_dollars" 0
-			"preffered categories" ["porn"
+			"preffered_categories" ["porn"
                                     "murder"
+			                        "scala"
 									"pokemons"]})
 ```
 
 **Eve:** You see how it is much easier define specific data?  
-**Pedro:** Sure, and `interpret` it's just a **function** per bencode type, instead of separate class.
+**Pedro:** Sure, and `interpret` it's just a **function** per bencode type, instead of separate class.  
+**Eve:** Correct, interpreter is nothing but a **set of functions to process a tree**.
 
 ### <div id="flyweight"/>Episode 12: Flyweight
 
@@ -1600,8 +1617,7 @@ method instead of constructor to return cached object.
 **Pedro:** Pretty the same.  
 **Eve:** No, it is much flexible, you can't use two-dimensional array if you need to cache three points or non-integer values.  
 **Pedro:** Oh, got it.  
-**Eve:** Even better, in clojure you can use `memoize` function
-to cache calls to factory function `make-point`  
+**Eve:** Even better, in clojure you can just use `memoize` function to cache calls to factory function `make-point`  
 
 ``` clojure
 (def make-point-memoize (memoize make-point))
@@ -1610,7 +1626,7 @@ to cache calls to factory function `make-point`
 **Eve:** Every call (except first one) with the same parameters
 return cached value.  
 **Pedro:** That's awesome!  
-**Eve:** Of course, but remember if your function has side-effects, memoization is bad idea.  
+**Eve:** Of course, but remember **if your function has side-effects, memoization is bad idea**.  
 
 ### <div id="builder"/>Episode 13: Builder
 
@@ -1713,7 +1729,7 @@ Coffee c = new Coffee.Builder()
 **Pedro:** Calling to method `make` checks all required parameters, and could validate and throw an exception if object is in inconsistent state.  
 **Eve:** Awesome functionality, but why so verbose?  
 **Pedro:** Beat it.  
-**Eve:** A piece of cake, clojure supports optional parameters  
+**Eve:** A piece of cake, clojure supports **optional arguments**, everything what builder pattern is about.  
 
 ``` clojure
 (defn make-coffee [name amount water
@@ -1825,7 +1841,7 @@ class OldServlet {
 **Pedro:** That's our internal API for developers, every time they need to process request, inject
 4 services, include all imports, and write this code.  
 **Eve:** Let's refactor it with...  
-**Pedro:** ...Facade pattern. We resolve all dependencies to a single point of access and simplify API usage.  
+**Pedro:** ...Facade pattern. We resolve all dependencies to a **single point of access** and simplify API usage.  
 
 ``` java
 public class FacadeService {
@@ -1951,7 +1967,7 @@ all existing functionality from facade is available?
 > Force one per application UI configuration.
 
 **Pedro:** But wait, there was requirement to save UI style per user.  
-**Eve:** Probably it was changed.
+**Eve:** Probably it was changed.  
 **Pedro:** Ok, then we should just save configuration to `Singleton` and use it from all the places.
 
 ``` java
@@ -2009,14 +2025,15 @@ call it when the configuration changes.
 **Pedro:** But atoms are useful only in concurrent environment.  
 **Eve:** First, yes, they useful, but NOT only in concurrent environment.
 Second, atom read is not as slow as you think. Third, it changes the state of
-UI configuration *atomically*
+UI configuration *atomically*  
 **Pedro:** It is redundant for such simple example.  
 **Eve:** No, it is not. There is a posibility that UI configuration changes
-and some renders read new `backgroundStyle`, but old `fontStyle`
-**Pedro:** Ok, use `synchronized` for `loadConfig`
-**Eve:** Then you must use `synchonized` on getters as well, it is slow.
-**Pedro:** There is still *Double-Checked Locking* idiom
-**Eve:** Double-checked locking is clever but [broken](http://www.javaworld.com/article/2074979/java-concurrency/double-checked-locking--clever--but-broken.html)
+and some renders read new `backgroundStyle`, but old `fontStyle`  
+**Pedro:** Ok, use `synchronized` for `loadConfig`  
+**Eve:** Then you must use `synchonized` on getters as well, it is slow.  
+**Pedro:** There is still *Double-Checked Locking* idiom  
+**Eve:** Double-checked locking is clever but [broken](http://www.javaworld.com/article/2074979/java-concurrency/double-checked-locking--clever--but-broken.html)  
+**Pedro:** Ok, I give up, you won.
 
 ###<div id="chain"/> Episode 16: Chain Of Responsibility
 
@@ -2033,7 +2050,7 @@ profanity words in public chat.
 
 **Pedro:** Ok, so let's just add a filter to replace these rude words with the asterisks.  
 **Eve:** Make sure your solution is extendable, other filters could be applied.  
-**Pedro** Chain of Responisibility seems like a good pattern candidate for that.
+**Pedro:** Chain of Responisibility seems like a good pattern candidate for that.
 First of all we make some abstract filter.
 
 ``` java
@@ -2138,7 +2155,7 @@ rejectFilter.process(message);
 
 **Eve:** You see how much it is easier, you don't need every-time call
 `if (nextFilter != null) nextFilter.process()`, because it's natural.
-The next filter defined at the `some->` level instead of case where each filter knows who's next.  
+The next filter defined at the `some->` level naturally, instead of calling manuall `setNext`.  
 **Pedro:** That's definitely better for composability, but why did you use `some->` instead of `->`?  
 **Eve:** Just for `reject-filter`. It could stop further processing, so `some->` returns `nil` as soon
 as `nil` encountered as a filter  
@@ -2255,10 +2272,12 @@ page.render();
 
 **Eve:** If you need more advanced traversals, use [clojure.walk](https://clojure.github.io/clojure/clojure.walk-api.html)  
 **Pedro:** I don't know, everything seems just a bit harder.  
-**Eve:** No, you define the whole tree with one datastructure and use one function to operate on oi.  
-**Pedro:** Anyway, let's move forward.  
+**Eve:** No, you define the whole tree with one datastructure and use one function to operate on it.  
+**Pedro:** What this function will do?  
+**Eve:** It traverses the tree and applies to every node, so in our case it can render each component.  
+**Pedro:** I don't know, maybe I am too young for the trees, let's move forward.  
 
-###<div id="factory_method"/> Episode 17. Factory Method
+###<div id="factory_method"/> Episode 18. Factory Method
 
 > **Sir Dry Bang** suggest to create new levels for their popular
 > game. More levels - more money.
@@ -2319,7 +2338,10 @@ Maze maze = builder.build();
 ```
 
 **Pedro:** Hm, seems similar.  
-**Eve:** I mean it.  
+**Eve:** Think about it.  
+**Pedro:** Any usage examples?  
+**Eve:** No, everything is obvious here, just re-read [Strategy](#strategy), [State](#state) or [TemplateMethod](#template_method)
+episodes.
 
 ###<div id="abstract_factory"/> Episode 19: Abstract Factory
 
@@ -2559,32 +2581,400 @@ class Commando implements Knight {
 
 ###<div id="decorator"/> Episode 21: Decorator
 
-> **Eavesdropper** caught us on cheating for the tournament.
+> **Podrea Vesper** caught us on cheating for the tournament.
 > We have a choice: to be busted by police or to help
 > his super knight to take part in competition
 
-**Pedro:** I don't wanna go to prison.
-**Eve:** Me either.
-**Pedro:** Let's cheat for him one more time.
-**Eve:** This is the same solution, isn't it?
+**Pedro:** I don't wanna go to prison.  
+**Eve:** Me either.  
+**Pedro:** Let's cheat for him one more time.  
+**Eve:** This is the same solution, isn't it?  
 **Pedro** Similar, but not the same.
-Commando was a soldier and they are not allowed on the tournament. We adapted it.
-But knight is allowed for tournament we don't need to adapt it, we add functionality to existing object.
-**Eve:** Inheritance or composition?
-**Pedro:** Composition, the main goal of decorator to change behaviour at a runtime
+Commando was a soldier and they are not allowed on the tournament. We *adapted* it. But knight is allowed for tournament we don't need to adapt it, we *must* add functionality to existing object.  
+**Eve:** Inheritance or composition?  
+**Pedro:** Composition, the main goal of decorator to change behaviour at a runtime  
+**Eve:** So how we deal with this super knight?  
+**Pedro:** They plan to use `Galahad` knight and *decorate* it with *more HP* and *Power Armor*  
+**Eve:** Heh, funny that cops are playing Fallout  
+**Pedro:** Yeah, let's make knight an abstract class  
 
 ``` java
+public class Knight {
+    protected int hp;
+    private Knight decorated;
 
+    public Knight() { }
+
+    public Knight(Knight decorated) {
+        this.decorated = decorated;
+    }
+
+    public void attackWithSword() {
+        if (decorated != null) decorated.attackWithSword();
+    }
+
+    public void attackWithBow() {
+        if (decorated != null) decorated.attackWithBow();
+    }
+
+    public void blockWithShield() {
+        if (decorated != null) decorated.blockWithShield();
+    }
+}
 ```
 
+**Eve:** So what we improved there?  
+**Pedro:** First af all we make class `Knight` instead of interface to have access to hit points. Then we provide two diferent constructors, default for standard behaviour, and decorated, which delegates call to decorated object.  
+**Eve:** Is it fair to use abstract class instead of interface?  
+**Pedro:** No, but we avoid two classes with similar behaviour and fill each decorated object with default implementation, instead of forcing to implement each of the methods.  
+**Eve:** Ok, what's about Power Armor?  
+**Pedro:** Easy as well  
+
+``` java
+public class KnightWithPowerArmor extends Knight {
+    public KnightWithPowerArmor(Knight decorated) {
+        super(decorated);
+    }
+
+    @Override
+    public void blockWithShield() {
+        super.blockWithShield();
+        Armor armor = new PowerArmor();
+        armor.block();
+    }
+}
+
+public class KnightWithAdditionalHP extends Knight {
+    public KnightWithAdditionalHP(Knight decorated) {
+        super(decorated);
+        this.hp += 50;
+    }
+}
+```
+
+**Pedro:** Two decorators that fulfils FBI requirements, and we able
+to create super knight, with behaviour like Galahad, but super armor and 50 more hit points.
+
+``` java
+Knight superKnight =
+     new KnightWithAdditionalHP(
+     new KnightWithPowerArmor(
+	 new Galahad()));
+```
+
+**Eve:** Nice trick!  
+**Pedro:** You are welcome to show the similar behaviour in clojure  
+**Eve:** Here it is  
 
 ``` clojure
+(def galahad {:name "Galahad"
+              :speed 1.0
+              :hp 100
+              :attack-bow-fn attack-with-bow
+              :attack-sword-fn attack-with-sword
+              :block-fn block-with-shield})
 
+(defn make-knight-with-more-hp [knight]
+  (update-in knight [:hp] + 50))
+
+(defn make-knight-with-power-armor [knight]
+  (update-in knight [:block-fn]
+             (fn [block-fn]
+               (fn []
+                 (block-fn)
+                 (block-with-power-armor)))))
+
+;; create the knight
+(def superknight (-> galahad
+                     make-knight-with-power-armor
+                     make-knight-with-more-hp)
 ```
 
-###<div id="bridge"/> Episode 22: Bridge
+**Pedro:** The same functionality.  
+**Eve:** Yes, just pay attention to power armor decorator.  
 
-###<div id="proxy"/> Episode 23: Proxy
+
+
+###<div id="proxy"/> Episode 22: Proxy
+
+> **Deren Bart** manages the system for making mixed drinks.
+> It is rigid system, because after making a drink *Bart* must manually subtract used ingredients
+> from the bar. Do this automatically.
+
+**Pedro:** Can we get access to his codebase?  
+**Eve:** No, but he sent some APIs.  
+
+```java
+interface IBar {
+    void makeDrink(Drink drink);
+}
+
+interface Drink {
+    List<Ingredient> getIngredients();
+}
+    
+interface Ingredient {
+    String getName();
+    double getAmount();
+}
+```
+
+**Pedro:** Bart doesn't want us to modify sources, instead we need to provide some additional
+implementation for `IBar` interface with autosubtracting used ingredients.  
+**Eve:** And what are we responsible for?  
+**Pedro:** Implementing _Proxy Pattern_, I've read about it some times ago.  
+**Eve:** I'm all listening.  
+**Pedro:** Basically we delegate all existing functionality to standard `IBar` implementation
+and provide new functionality inside `ProxiedBar`
+
+```java
+class ProxiedBar implements IBar {
+    BarDatabase bar;
+    IBar standardBar;
+
+    public void makeDrink(Drink drink) {
+       standardBar.makeDrink(drink);
+       for (Ingredient i : drink.getIngredients()) {
+           bar.subtract(i);
+       }
+    }
+}
+```
+
+**Pedro:** They need to replace `StandardBar` implementation with our `ProxiedBar`.  
+**Eve:** Seems super easy.  
+**Pedro:** Yes, additional plus that we don't break existing functionality.  
+**Eve:** Are you sure? We didn't run regression tests.  
+**Pedro:** Everything we do is delegating functionality to already tested `StandardBar`  
+**Eve:** But you also substracts used ingredients from `BarDatabase`  
+**Pedro:** We assume, they are _decoupled_.  
+**Eve:** Oh...  
+**Pedro:** Does clojure have some alternative?  
+**Eve:** Well, I don't know. What I see here you are using function composition.  
+**Pedro:** Explain.  
+**Eve:** `IBar` implementation is a set of functions, and another `IBar` is another set of functions.
+Everything you talking about additional implementation could be covered by function composition. It's like
+`make-drink` and after that `subtract-ingredients` from bar.  
+**Pedro:** Maybe code is more clear?  
+**Eve:** Yes, but I don't think something special here  
+
+```clojure
+;; interface
+(defprotocol IBar
+  (make-drink [this drink]))
+
+;; Bart's implementation
+(deftype StandardBar []
+  IBar
+  (make-drink [this drink]
+    (println "Making drink " drink)
+    :ok))
+
+;; our implementation
+(deftype ProxiedBar [db ibar]
+  IBar
+  (make-drink [this drink]
+    (make-drink ibar drink)
+    (subtract-ingredients db drink)))
+
+;; this how it was before
+(make-drink (StandardBar.)
+	{:name "Manhattan"
+	 :ingredients [["Bourbon" 75] ["Sweet Vermouth" 25] ["Angostura" 5]]})
+
+;; this how it becomes now
+(make-drink (ProxiedBar. {:db 1} (StandardBar.))
+	{:name "Manhattan"
+     :ingredients [["Bourbon" 75] ["Sweet Vermouth" 25] ["Angostura" 5]]})
+```
+
+**Eve:** We could leverage protocol and types to group set of functions as a single object.  
+**Pedro:** Looks like clojure has object-oriented capabilities as well.  
+**Eve:** Correct, moreover it has a `reify` function, which allow you to create proxies in a runtime  
+**Pedro:** Like class in a runtime?  
+**Eve:** Sort of.
+
+```clojure
+(reify IBar
+  (make-drink [this drink]
+    ;; implementation goes here
+  ))
+```
+
+**Pedro:** Looks handy.  
+**Eve:** Yes, but I still don't understand how it differs from Decorator.  
+**Pedro:** They are completely different.  
+**Eve:** Decorator adds functionality to the same interface, and so does Proxy.  
+**Pedro:** Well, but Proxy is...  
+**Eve:** Even more, Adapter is not very different as well.  
+**Pedro:** It uses another interface.  
+**Eve:** But from implementation perspective all these pattern are the same,
+wrap something and delegate calls to wrapper. *"Wrapper"* could be a good name for these patterns.  
+
+###<div id="bridge"/> Episode 23: Bridge
+
+> Girls from HR agency "Hurece's Sour Man" trying to identify candidates
+> to their open job positions. The problem is jobs often created by customers, but requirements to the jobs
+> are developed by HR. Provide them with a flexible way of collaborating.
+
+**Eve:** I don't understand the problem.  
+**Pedro:** I have a bit of background. They have a very strange system which defines job requirements as an interface.
+
+```java
+interface JobRequirement {
+    boolean accept(Candidate c);
+}
+```
+
+**Pedro:** Every specific requirement implemented as a new subclass of this.
+
+```java
+class JavaRequirement implements JobRequirement {
+    public boolean accept(Candidate c) {
+        return c.hasSkill("Java");
+    }
+}
+
+class Experience10YearsRequirement implements JobRequirement {
+    public boolean accept(Candidate c) {
+        return c.getExperience() >= 10;
+    }
+}
+```
+
+**Eve:** I've got an idea.  
+**Pedro:** Take into account, this requirement hierarchy is designed by HR Department.  
+**Eve:** Ok.  
+**Pedro:** And they have a `Job` hierarchy, where each specific job is subclass as well.  
+**Eve:** Why do they need a class for each job? It should be an object.  
+**Pedro:** The system was designed when classes were more popular than objects, so live with this.  
+**Eve:** Class were popular than objects?!  
+**Pedro:** Yes, listen and don't interrupt me. Jobs with requirements is completely separate hierarchy,
+and it is developed by customers. We introduce pattern `Bridge` to separate these two hierarchies and allow
+them live independently.  
+
+```java
+abstract class Job {
+    protected List<? extends JobRequirement> requirements;
+
+    public Job(List<? extends JobRequirement> requirements) {
+        this.requirements = requirements;
+    }
+
+	protected boolean accept(Candidate c) {
+        for (JobRequirement j : requirements) {
+            if (!j.accept(c)) {
+                return false;
+			}
+        }
+        return true;
+    }
+}
+
+class CognitectClojureDeveloper extends Job {
+    public CognitectClojureDeveloper() {
+        super(Arrays.asList(
+                  new ClojureJobRequirement(),
+                  new Experience10YearsRequirement()
+        ));
+    }
+}
+```
+
+**Eve:** So where is the bridge?  
+**Pedro:** `JobRequirement`, `JavaRequirement`, `ExperienceRequirement` is one hierarchy, yes?  
+**Eve:** Yes.  
+**Pedro:** `Job`, `CongnitectClojureDeveloperJob`, `OracleJavaDeveloperJob` is another hierarchy.  
+**Eve:** Oh, now I see. A link from Job to JobRequirement is a bridge.  
+**Pedro:** Exactly! This is how HR can use this system to find candidate matches.  
+
+```java
+Candidate joshuaBloch = new Candidate();
+(new CognitectClojureDeveloper()).accept(joshuaBloch);
+(new OracleSeniorJavaDeveloper()).accept(joshuaBloch);
+```
+
+**Pedro:** Here is the point. Customers use `Job` as abstraction and `JobRequirement` as an implementation.
+They just create a job with descriptions or so, and HR is responsible to convert these descriptions into specific set
+of `JobRequirement` objects.  
+**Eve:** Got it.  
+**Pedro:** So as far as I understand, clojure could mimic this pattern by using `defprotocol` and `defrecord`?  
+**Eve:** Yes, but I want to revisit the problem.  
+**Pedro:** What's wrong?  
+**Eve:** Here is we have a static flow: customer create job positions, human resources convert job position to a set of requirements
+and run a script against their candidates database to find a matches.  
+**Pedro:** Correct.  
+**Eve:** So there is already dependency, HR can't do anything without open job positions.  
+**Pedro:** Well, yes. But they can develop a set of structured requirements without knowing what open positions might be.  
+**Eve:** For what purpose?  
+**Pedro:** Later this can be reused by Job creators, so HR avoid doing the same work twice.  
+**Eve:** Okay, got it, but this problem is artificial. Basically what we need is a way to colaborate between abstraction and implementation.  
+**Pedro:** Maybe, but I want to see your clojure way solution for that specific problem using bridge pattern.  
+**Eve:** Easy. Let's use adhoc hierarchies.  
+**Pedro:** For abstractions?  
+**Eve:** Yes, jobs hierarchy is _abstraction_, and people need just to enhance hierarchy.  
+
+
+```clojure
+;; abstraction
+
+(derive ::clojure-job ::job)
+(derive ::java-job ::job)
+(derive ::senior-clojure-job ::clojure-job)
+(derive ::senior-java-job    ::java-job)
+```
+
+**Eve:** HR department are like _developers_, they provide implementation for this abstraction.  
+
+```clojure
+;; implementation
+(defmulti accept :job)
+
+(defmethod accept :java [candidate]
+  (and (some #{:java} (:skills candidate))
+       (> (:experience candidate) 1)))
+```
+
+**Eve:** Later, when new jobs are created, but requirements are not yet developed and no `accept` method implementation for this type of job, we fallback using adhoc hierarchy.  
+**Pedro:** Hm?  
+**Eve:** Assume someone created a new `::senior-java` as a child of `::java` job.  
+**Pedro:** Oh, and if HR not provided `accept` implementation for dispatch value `::senior-java`, method with dispatch value `::java` will be called, yes?  
+**Eve:** You learning so fast.  
+**Pedro:** But is it real bridge pattern?  
+**Eve:** There is no _bridge_ here, but abstraction and implementation can live independently.
+
+# The End.
+
+
+### <div id="cheatsheet"/>Cheatsheet (instead of conclusion)
+
+It is very confusing to understand patterns, which often presented in object-oriented way
+with bunch of UML diagrams, fancy nouns and exist to solve language-specific problems,
+so here is a revisited mini cheatsheet, which helps you to understand patterns by analogy.
+
+- **Command** - _function_
+- **Strategy** - _function, which accepts function_
+- **State** - _strategy, depends on state_
+- **Visitor** - _multiple dispatch_
+- **Template Method** - _strategy with defaults_
+- **Iterator** - _sequence_
+- **Memento** - _save and restore_
+- **Prototype** - _immutability_
+- **Mediator** - _reduce coupling_
+- **Observer** - _function, which calls after another function_
+- **Interpreter** - _set of functions to process a tree_
+- **Flyweight** - _cache_
+- **Builder** - _optional arguments_
+- **Facade** - _single point of access_
+- **Singleton** - _global variable_
+- **Chain of Responsibility** - _function composition_
+- **Composite** - _tree_
+- **Factory Method** - _strategy for creating objects_
+- **Abstract Factory** - _strategy for creating set of related objects_
+- **Adapter** - _wrapper, same functionality, different type_ 
+- **Decorator** - _wrapper, same type, new functionality_
+- **Proxy** - _wrapper, function composition_
+- **Bridge** - _separate abstraction and implementation_
 
 ### Cast
 
@@ -2615,6 +3005,8 @@ and names are just anagrams.
 **Sir Dry Bang** - Angry Birds  
 **Saimank Gerr** - Risk Manager  
 **Deam Evil** - Medieval  
-** ** - Eavesdropper  
+**Podrea Vesper** - Eavesdropper  
+**Deren Bart** - Bartender  
+**Hurece's Sour Man** - Human Resources  
 
-http://google.com
+**P.S.** I've started to write this article _more than_ 2 years ago. Time has passed, things have changed and even Java 8 was released.
