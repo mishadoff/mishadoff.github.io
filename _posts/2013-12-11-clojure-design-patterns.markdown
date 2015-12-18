@@ -5,6 +5,7 @@ date: 2015-12-18 11:34
 comments: true
 categories: [clojure, programming, java, story, patterns]
 published: true
+sharing: true
 ---
 
 *Quick* overview of the classic [Design Patterns](http://en.wikipedia.org/wiki/Design_Patterns) in Clojure
