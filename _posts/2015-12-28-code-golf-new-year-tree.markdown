@@ -44,7 +44,7 @@ a(do(p\_)(d(- t 2))(p\_))1(d t))(n\\))
 (dotimes[i 2](f\ (- m 1))(n"| |"))))
 ```
 
-354 characters in Clojure.
+348 characters in Clojure.
 
 # Demo
 
