@@ -1,6 +1,6 @@
 # This is the default format. 
 # For more see: http://jekyllrb.com/docs/permalinks/
-permalink: /blog/:title 
+permalink: /blog/:title/
 safe: true
 simple_search: http://google.com/search
 
