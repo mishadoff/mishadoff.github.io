@@ -6,7 +6,7 @@ simple_search: http://google.com/search
 
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
 highlighter: pygments
-markdown: redcarpet
+markdown: kramdown
 
 kramdown:
   input: GFM
