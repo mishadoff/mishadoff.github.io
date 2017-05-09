@@ -20,33 +20,33 @@ All characters are fake, coincidences are accidental.*
 ### Index
 
 - [Intro](#intro)
-- [Episode  1. Command](#command)
-- [Episode  2. Strategy](#strategy)
-- [Episode  3. State](#state)
-- [Episode  4. Visitor](#visitor)
-- [Episode  5. Template Method](#template_method)
-- [Episode  6. Iterator](#iterator)
-- [Episode  7. Memento](#memento)
-- [Episode  8. Prototype](#prototype)
-- [Episode  9. Mediator](#mediator)
-- [Episode 10. Observer](#observer)
-- [Episode 11. Interpreter](#interpreter)
-- [Episode 12. Flyweight](#flyweight)
-- [Episode 13. Builder](#builder)
-- [Episode 14. Facade](#facade)
-- [Episode 15. Singleton](#singleton)
-- [Episode 16. Chain of Responsibility](#chain) 
-- [Episode 17. Composite](#composite) 
-- [Episode 18. Factory Method](#factory_method)
-- [Episode 19. Abstract Factory](#abstract_factory)
-- [Episode 20. Adapter](#adapter)
-- [Episode 21. Decorator](#decorator)
-- [Episode 22. Proxy](#proxy)
-- [Episode 23. Bridge](#bridge) 
+- [Episode  1. Command](#episode-1-command)
+- [Episode  2. Strategy](#episode-2-strategy)
+- [Episode  3. State](#episode-3-state)
+- [Episode  4. Visitor](#episode-4-visitor)
+- [Episode  5. Template Method](#episode-5-template-method)
+- [Episode  6. Iterator](#episode-6-iterator)
+- [Episode  7. Memento](#episode-7-memento)
+- [Episode  8. Prototype](#episode-8-prototype)
+- [Episode  9. Mediator](#episode-9-mediator)
+- [Episode 10. Observer](#episode-10-observer)
+- [Episode 11. Interpreter](#episode-11-interpreter)
+- [Episode 12. Flyweight](#episode-12-flyweight)
+- [Episode 13. Builder](#episode-13-builder)
+- [Episode 14. Facade](#episode-14-facade)
+- [Episode 15. Singleton](#episode-15-singleton)
+- [Episode 16. Chain of Responsibility](#episode-16-chain-of-responsibility) 
+- [Episode 17. Composite](#episode-17-composite) 
+- [Episode 18. Factory Method](#episode-18-factory-method)
+- [Episode 19. Abstract Factory](#episode-19-abstract-factory)
+- [Episode 20. Adapter](#episode-20-adapter)
+- [Episode 21. Decorator](#episode-21-decorator)
+- [Episode 22. Proxy](#episode-22-proxy)
+- [Episode 23. Bridge](#episode-23-bridge) 
 - [Cheatsheet](#cheatsheet)
 - [Cast](#cast)
 
-### <div id="intro"/>Intro
+### Intro
 
 > Our programming language is fucked up.  
 > That's why we need design patterns.
@@ -57,7 +57,7 @@ Two modest programmers **Pedro Veel** and **Eve Dopler**
 are solving common software engineering problems and
 applying design patterns.
 
-### <div id="command"/>Episode 1. Command
+### Episode 1. Command
 
 > Leading IT service provider **"Serpent Hill & R.E.E"**
 > acquired new project for USA customer.
@@ -162,7 +162,7 @@ new SomeInterfaceWithOneMethod() {
 **Pedro:** Hmm... Looks simple.  
 **Eve:** Definitely, **Command is just a function.**  
 
-### <div id="strategy"/>Episode 2. Strategy
+### Episode 2. Strategy
 
 > **Sven Tori** pays a lot of money
 > to see a page with list of users.
@@ -251,7 +251,7 @@ Collections.sort(users, new ReverseSubsComparator());
 **Pedro:** Very doubtful approach to pass strategy.  
 **Eve:** I don't care, because Strategy is just a **function passed to another function.**  
 
-### <div id="state"/>Episode 3. State
+### Episode 3. State
 
 > Sales person **Karmen Git**
 > investigated the market and decided
@@ -372,7 +372,7 @@ the same way as strategy pattern.
 **Pedro:** Not sure.  
 **Eve:** Well, it is topic for `Visitor` pattern.
 
-### <div id="visitor"/>Episode 4. Visitor
+### Episode 4. Visitor
 
 > **Natanius S. Selbys** suggested to implement functionality
 > which allows users export their messages, activities
@@ -583,7 +583,7 @@ until you add a separate `::csv` function.
 you don't need Visitor pattern**?  
 **Eve:** Exactly.  
 
-### <div id="template_method"/>Episode 5. Template Method
+### Episode 5. Template Method
 
 > MMORPG **Mech Dominore Fight Saga** requested to implement
 > a game bot for their VIP users. Not fair.
@@ -786,7 +786,7 @@ alias
 has no mana, so instead of trying to cast fireballs, he can just teleport and run away, you just provide new function.  
 **Pedro:** Makes sense. **Functions everywhere**.  
 
-### <div id="iterator"/>Episode 6. Iterator
+### Episode 6. Iterator
 
 > Technical consultant **Kent Podiololis**
 > complains for C-style loops usage.
@@ -868,7 +868,7 @@ because we haven't requested any value. It's lazy.
 **Eve:** Unfortunately, I am too lazy for that.  
 **Pedro:** I will remember that!  
 
-### <div id="memento"/>Episode 7: Memento
+### Episode 7: Memento
 
 > User **Chad Bogue** lost the message he was writing
 > for two days. Implement save button for him.
@@ -1002,7 +1002,7 @@ obtain prototype.
 **Eve:** We will talk about Prototype in a minute, but just
 remember that `Memento` is not about *caretaker* and *originator*, it is about **save** and **restore**.  
 
-### <div id="prototype"/>Episode 8: Prototype
+### Episode 8: Prototype
 
 > **Dex Ringeus** detected that users feel uncomfortable
 > with registration form. Make it more usable.
@@ -1107,7 +1107,7 @@ time consuming operation.
 **Eve:** No, it is not. Go to Google and search for *persistent data structures* and *structural sharing*  
 **Pedro:** Thanks a lot.  
 
-### <div id="mediator"/>Episode 9: Mediator
+### Episode 9: Mediator
 
 > Recently performed external code review
 > shows a lot of issues with current codebase.
@@ -1222,7 +1222,7 @@ for *saving users* and *sending messages*
 **Pedro:** Good enough.  
 **Eve:** Nothing interesing here, because it is just a one approach **to reduce coupling**.
 
-### <div id="observer"/>Episode 10: Observer
+### Episode 10: Observer
 
 > Independent security commision
 > detected hacker **Dartee Hebl** has over a billion
@@ -1372,7 +1372,7 @@ dynamically.
 **Eve:** If there is provided another secred method `secret-add-money` for changing balance, watchers will handle that as well.  
 **Pedro:** That's awesome!  
 
-### <div id="interpreter"/>Episode 11: Interpreter
+### Episode 11: Interpreter
 
 > **Bertie Prayc** stole important data from our server
 > and shared it via BitTorrent system.
@@ -1538,7 +1538,7 @@ BitTorrent.send(bencodedString);
 **Pedro:** Sure, and `interpret` it's just a **function** per bencode type, instead of separate class.  
 **Eve:** Correct, interpreter is nothing but a **set of functions to process a tree**.
 
-### <div id="flyweight"/>Episode 12: Flyweight
+### Episode 12: Flyweight
 
 > Administrators of the lawyer firm **Cristopher, Matton & Pharts**
 > detected that reporting system consumes a lot of memory
@@ -1629,7 +1629,7 @@ return cached value.
 **Pedro:** That's awesome!  
 **Eve:** Of course, but remember **if your function has side-effects, memoization is bad idea**.  
 
-### <div id="builder"/>Episode 13: Builder
+### Episode 13: Builder
 
 > **Tuck Brass** complains that his old automatic
 > coffee-making system is very slow in usage.
@@ -1805,7 +1805,7 @@ Just create a new class with `deftype` and do not forget to use `volatile-mutabl
 
 **Pedro:** Not as hard as I thought.
 
-###<div id="facade"/> Episode 14: Facade
+###  Episode 14: Facade
 
 > Our new member **Eugenio Reinn Jr.** commited
 > file with diff in 134 lines to processing servlet.
@@ -1962,7 +1962,7 @@ all existing functionality from facade is available?
 **Eve:** Yes.  
 **Pedro:** Pretty the same.  
 
-###<div id="singleton"/> Episode 15: Singleton
+###  Episode 15: Singleton
 
 > **Feverro O'Neal** complains that we have a lot of different styles for UI.  
 > Force one per application UI configuration.
@@ -2036,7 +2036,7 @@ and some renders read new `backgroundStyle`, but old `fontStyle`
 **Eve:** Double-checked locking is clever but [broken](http://www.javaworld.com/article/2074979/java-concurrency/double-checked-locking--clever--but-broken.html)  
 **Pedro:** Ok, I give up, you won.
 
-###<div id="chain"/> Episode 16: Chain Of Responsibility
+###  Episode 16: Chain Of Responsibility
 
 > New York marketing organization **"A Profit NY"** opened request to
 > filter profanity words from their public chat system.
@@ -2171,7 +2171,7 @@ as `nil` encountered as a filter
 **Pedro:** Understood.  
 **Eve:** *Chain of Responsibility* just an approach to **function composition**  
 
-###<div id="composite"/> Episode 17: Composite
+###  Episode 17: Composite
 
 > Actress **Bella Hock** don't see user avatars in our social network on her computer.
 > 
@@ -2278,7 +2278,7 @@ page.render();
 **Eve:** It traverses the tree and applies to every node, so in our case it can render each component.  
 **Pedro:** I don't know, maybe I am too young for the trees, let's move forward.  
 
-###<div id="factory_method"/> Episode 18. Factory Method
+###  Episode 18. Factory Method
 
 > **Sir Dry Bang** suggest to create new levels for their popular
 > game. More levels - more money.
@@ -2344,7 +2344,7 @@ Maze maze = builder.build();
 **Eve:** No, everything is obvious here, just re-read [Strategy](#strategy), [State](#state) or [TemplateMethod](#template_method)
 episodes.
 
-###<div id="abstract_factory"/> Episode 19: Abstract Factory
+###  Episode 19: Abstract Factory
 
 > Users are not buying new levels in the game.
 > **Saimank Gerr** build a complains cloud and the most popular
@@ -2461,7 +2461,7 @@ Abstract Factory do the same but for a *set of related object*.
 **Eve:** Provide some parameters for function. So, `underground-level-factory` knows how to construct walls, backs and enemies. Everything other *inherited* from abstract `level-factory` function.  
 **Pedro:** Handy.  
 
-###<div id="adapter"/> Episode 20: Adapter
+###  Episode 20: Adapter
 
 > **Deam Evil** conducts a medieval tournament for knights.
 > The prize is $100.000
@@ -2580,7 +2580,7 @@ class Commando implements Knight {
 **Eve:** Ok, 70/70  
 **Pedro:** Deal.  
 
-###<div id="decorator"/> Episode 21: Decorator
+###  Episode 21: Decorator
 
 > **Podrea Vesper** caught us on cheating for the tournament.
 > We have a choice: to be busted by police or to help
@@ -2696,7 +2696,7 @@ Knight superKnight =
 
 
 
-###<div id="proxy"/> Episode 22: Proxy
+###  Episode 22: Proxy
 
 > **Deren Bart** manages the system for making mixed drinks.
 > It is rigid system, because after making a drink *Bart* must manually subtract used ingredients
@@ -2812,7 +2812,7 @@ Everything you talking about additional implementation could be covered by funct
 **Eve:** But from implementation perspective all these pattern are the same,
 wrap something and delegate calls to wrapper. *"Wrapper"* could be a good name for these patterns.  
 
-###<div id="bridge"/> Episode 23: Bridge
+###  Episode 23: Bridge
 
 > Girls from HR agency "Hurece's Sour Man" trying to identify candidates
 > to their open job positions. The problem is jobs often created by customers, but requirements to the jobs
@@ -2947,7 +2947,7 @@ and run a script against their candidates database to find a matches.
 # The End.
 
 
-### <div id="cheatsheet"/>Cheatsheet (instead of conclusion)
+### Cheatsheet
 
 It is very confusing to understand patterns, which often presented in object-oriented way
 with bunch of UML diagrams, fancy nouns and exist to solve language-specific problems,
