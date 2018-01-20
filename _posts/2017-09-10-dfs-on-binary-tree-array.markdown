@@ -138,7 +138,7 @@ Using stack data structure it could be implemented the same way as for classic b
 just put indices into the stack.
 
 From this point recursion is not different at all,
-you just use implicit method call stack instead of data strcuture stack.
+you just use implicit method call stack instead of data structure stack.
 
 What if we could implement DFS without stack and recursion.
 In the end is just a selecting correct index on each step?

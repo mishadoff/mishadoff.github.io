@@ -36,17 +36,21 @@ In this post we discuss the evolution of Data Structures and try to develop ever
 - [17. Circular Buffer](#circular-buffer)
 - [18. Binary Tree](#binary-tree)
 - [19. Binary Tree Array](#binary-tree-array)
-
-
 - [20. Binary Search Tree](#binary-search-tree)
 
 
-- [Matrix]()
-- [Bip Buffer]()
+- [Red-Black Tree](#red-black-tree)
+- [B-Tree](#b-tree)
+- [Radix Tree](#radix-tree)
+- [Randomized Binary Search Tree](#randomized-binary-search-tree)
+- [AVL Tree](#avl-tree)
+- [Matrix]()     
+- [Bip Buffer]() // Circular Buffer
 - [Priority Queue]()
 - [Tree](#tree)
 - [Prefix Tree](#prefix-tree)
 - [Graph](#graph)
+- [LRU Cache](#lru-cache)
 - [Other Trees](#trees)
 - [Partially Ordered Set aka Lattice](#lattice)
 - [Persistent Data Structures](#psd)
@@ -75,6 +79,8 @@ For example, [Binary Search](https://en.wikipedia.org/wiki/Binary_search_algorit
 And so on.
 
 If algorithm is a _sequence of actions_, data structure is a _way of organizing data_. Access to such data often controlled by algorithms. Data structures use algorithms and algorithms use data structures, they always live together.
+
+TODO Data Structures vs Data Types vs Abstract Data Types
 
 Some data structures are more efficient than others.  
 For example, Array is better than Linked List for random access and iteration.
@@ -2609,7 +2615,7 @@ public class CircularBuffer<T> {
 
 Array for data, two indices for head/tail and size.
 
-Because it's stack data structure we need to implement `offer` and `poll`
+Because it's queue data structure we need to implement `offer` and `poll`
 
 Adding element is basically writing data to current `tailIndex`, move it no next cell and incrementing the size.
 
@@ -2871,7 +2877,7 @@ public void deleteLeft() {
 }
 ```
 
-Binary Tree data is not very useful by itself.
+Binary Tree data structure is not very useful by itself.
 You can construct the tree, traverse it, search for specific element and that's all.
 
 Later we will see how advanced data structures reuse binary tree functionality to provide powerful features.
@@ -2905,13 +2911,321 @@ public int bfs(Predicate<T> predicate) {
 }
 ```
 
-DFS is a bit harder, but basically it's all about choosing correct index
-
-``` java
-TODO
-```
+DFS is a bit harder, but basically it's all about choosing correct index.
+It still possible to implement DFS on arrays without recursion and stack, as we have shown [here](/blog/dfs-on-binary-tree-array/).
 
 ### 20. Binary Search Tree
+
+People often confuse binary tree and binary search tree. So, let's see what's the difference.
+
+**Binary Search Tree** (BST) is one of the practical data structures based on binary tree.
+BST is stil a binary tree, but additional requirement are put on nodes relationship.
+
+_For some node A, all elements in left subtree should be less (or equal) than node A,
+and all elements in right subtree should be greater (or equal) than node A.
+Also both left subtree and right subtree should be binary search trees as well._
+
+We will call this later a _BST property_.
+
+Let's see an example.
+
+<img src="/images/ds/binary_search_tree.png" alt="img" style="width: 80%;"/>
+
+See, root node is greater than all its left children and grandchildren.
+Meanwhile left subtree by itself has the same property, it is BST as well.
+
+Binary Search Tree could be implemented for any objects which we can compare (e.g. implement `Comparable`).
+That's why our `BinarySearchTree` implementation works only on comparable nodes. Internally we back it by
+standard binary tree node.
+
+``` java
+public class BinarySearchTree<T extends Comparable<T>> {
+    public BinaryTreeNode<T> root = null;
+}
+```
+
+Let's implement a method to check if binary tree is binary search tree
+
+``` java
+public boolean isBST() {
+    return isBST(root, null, null);
+}
+
+private boolean isBST(BinaryTreeNode<T> node, T leftBoundary, T rightBoundary) {
+    if (node == null) return true;
+    // node.data should be between leftBoundary and rightBoundary
+    boolean inRange = ((leftBoundary == null) ? true : node.data.compareTo(leftBoundary) >= 0) &&
+                      ((rightBoundary == null) ? true : node.data.compareTo(rightBoundary) <= 0);
+    return inRange &&
+           isBST(node.left, leftBoundary, node.data) &&
+           isBST(node.right, node.data, rightBoundary);
+}
+```
+
+`isBST` no arg method will call our internal `isBST`, where we can check boundaries for the node.
+
+`root` node, obviously doesn't have any boundaries, so we set them to `null`.
+Then we check if `node.data` lies inside boundaries, and if they are `null`, we set `inRange` to `true`.
+After that we call recursively `isBST` for left and right subtrees, and update their boundaries.
+So that, for left tree it uses `node.data` as a right boundary and for right tree is uses `node.data` as a left boundary.
+We countinue recursively until whole tree processed or one of the calls return `false`.
+
+Keep in mind, we used `compareTo` as generic way to compare values. So
+
+if for integers holds `a > b`, the same condition for comparable objects is `a.compareTo(b) > 0`  
+if `a < b`, `a.compareTo(b) < 0`  
+if `a == b`, `a.compareTo(b) == 0`  
+
+So why binary search trees are good?
+
+Recall a search algorithm BFS or DFS, where on worst case you need to check all tree nodes.
+Complexity is `O(n)`. For binary tree, we can compare search value to the current root, is it's greater, search in right subtree
+otherwise, search in left subtree. On every step we reduce our search space by half, so overall complexity is `O(logn)`
+
+Yeah, it's a one to one analogy, as between linear search and binary search on sorted array.
+
+So if you try to implement search for binary tree, you come up with something like this.
+
+``` java
+public BinaryTreeNode<T> find(T value) {
+    return find(root, value);
+}
+
+private BinaryTreeNode<T> find(BinaryTreeNode<T> node, T value) {
+    if (node == null) return null; // not found
+    if (node.data.equals(value)) return node; // found
+    if (value.compareTo(node.data) < 0) return find(node.left, value); // search in left subtree
+    if (value.compareTo(node.data) > 0) return find(node.right, value); // search in right subtree
+    return null;
+}
+```
+
+_Note: since we allow duplicates in BST, find returns only first matched node_
+
+But not all binary trees are binary search trees, so we need an effective way to construct them.
+Let's see how we can implement `insert`/`delete` methods, so BST property always maintained.
+
+Starting with simpler one, insert
+
+<img src="/images/ds/binary_search_tree_insert.png" alt="img" style="width: 80%;"/>
+
+Insert into binary search tree could be break down into two steps: find the correct place for insert, do insert.
+Finding the correct place is similar to finding exact value as we discussed above and it involves `O(logn)` complexity.
+Then you just do plain insert into the tree and it's `O(1)`. So the total complexity of insertion into binary search tree
+is `O(logn)`
+
+``` java
+public void add(T value) {
+    if (root == null) root = new BinaryTreeNode<T>(value);
+    else insertChild(root, value);
+}
+
+private void insertChild(BinaryTreeNode<T> node, T value) {
+    if (node.data.compareTo(value) >= 0) { // insert left
+        if (node.left == null) node.left = new BinaryTreeNode<T>(value);
+        else insertChild(node.left, value);
+    } else {
+        if (node.right == null) node.right = new BinaryTreeNode<T>(value);
+        else insertChild(node.right, value);
+    }
+}
+```
+
+Deletion is harder. If you remember, deleting from binary tree prohibited for nodes, which has two children.
+With binary search tree we don't care much about maintaining the structure of the tree. All what we care about
+is maintaining the BST property. So let's see how can we accomplish that.
+
+Three cases should be processed.
+
+- Delete node with no children
+- Delete node with one child
+- Delete node with both children (including root!)
+
+<img src="/images/ds/binary_search_tree_deletion.png" alt="img" style="width: 100%;"/>
+
+
+Any observations?
+
+The new root could be a _maximum value from the left subtree_, or _minimum value from the right subtree_.
+
+Let's explain why it works.
+
+For example, we want to delete node `A`, all children from the left subtree are less than (or equal) than the value in `A`.
+All children from the right subtree are greater than `A`. If you take _maximum value from the left subtree_ and call it `B`,
+it still greater than all left children for `A` (because it's a maximum value!),
+and it's less than all elements in right subtree of `A` (by bst property).
+Therefore, `B` could become new parent instead of `A` without breaking the bst property.
+
+So the idea, is replace `A` with `B` and remove `B`.
+
+What's about `B` children?
+
+Well, because `B` is a _maximum_ from the left subtree, it has no right child.
+By BST, right child is greater than its parent, so if there was right child, the `B` was not the maximum.
+
+`B` has either one or zero children. And we already know how to delete such nodes.
+
+The last thing how to detect maximum from the left subtree. Just go `right` until you see `null`.
+
+Bringing all together
+
+``` java
+enum RemoveMode {
+    ROOT, LEFT, RIGHT
+}
+	
+public void remove(T value) {
+    removeFromSubtree(null, ROOT, value);
+}
+
+private void removeFromSubtree(BinaryTreeNode<T> parent, RemoveMode mode, T value) {
+    BinaryTreeNode<T> node = null;
+    if (mode == ROOT) node = root;
+    if (mode == LEFT) node = parent.left;
+    if (mode == RIGHT) node = parent.right;
+
+    if (node == null) return; // empty tree
+    if (node.data.equals(value)) { // node is to be removed
+        if (node.left == null && node.right == null) { // one element in the tree
+            if (mode == LEFT)  parent.left = null;
+            if (mode == RIGHT) parent.right = null;
+            if (mode == ROOT)  root = null;
+        } else if (node.left == null) { // one child, right
+            if (mode == LEFT)  parent.left = node.right;
+            if (mode == RIGHT) parent.right = node.right;
+            if (mode == ROOT)  root = root.right;
+        } else if (node.right == null) { // one child, left
+            if (mode == LEFT)  parent.left = node.left;
+            if (mode == RIGHT) parent.right = node.left;
+            if (mode == ROOT)  root = root.left;
+        } else { // both children are present
+            BinaryTreeNode<T> maxInLeftSubtree = node.left;
+            if (maxInLeftSubtree.right == null) { // max found
+                node.data = maxInLeftSubtree.data;
+                node.left = maxInLeftSubtree.left;
+            } else { // search for max
+                BinaryTreeNode<T> parentMax = maxInLeftSubtree;
+                maxInLeftSubtree = maxInLeftSubtree.right;
+                while (maxInLeftSubtree.right != null) {
+                    parentMax = maxInLeftSubtree;
+                    maxInLeftSubtree = maxInLeftSubtree.right;
+                }
+                node.data = maxInLeftSubtree.data;
+                parentMax.right = maxInLeftSubtree.left;
+            }
+        }
+    } else if (node.data.compareTo(value) > 0) {
+        removeFromSubtree(node, LEFT, value);
+    } else if (node.data.compareTo(value) < 0) {
+        removeFromSubtree(node, RIGHT, value);
+    }
+}
+```
+
+We introduced enum `RemoveMode`, which says where we delete either from `ROOT`, `LEFT` or `RIGHT` subtree.
+Such approach helps us to avoid code duplication and handle some edge cases.
+
+This may look a bit complicated, because it is.  
+The best way to understand removal is to sit down and handle each case on paper, or try to write such method from scratch.
+
+The good way to check if your implementation works is to write _invariant test cases_.
+For example, if you added element to the BST, its size should increase by one and the tree still should be a valid BST.
+Similar with removal.
+
+#### BALANCING
+
+One last thing with binary search trees which we have not mentioned and which is very important for tree data structures.
+
+Assume you have the BST. You did couple inserts, then couple removals, the again.
+At the end of the day your binary search tree may look like this.
+
+<img src="/images/ds/binary_search_tree_unbalanced.png" alt="img" style="width: 60%;"/>
+
+If you verify, it's still a valid BST.  
+But something wrong with it.  
+It looks like linked list, and search complexity is much closer to `O(n)`.
+
+Such type of trees are called _unbalanced_ and affected by severe performance degradation.
+This is common problem for trees and there are couple ways to avoid it.
+As you will see later, most of tree data structures are exist to solve such problem in effective way.
+
+For now, we will try to solve this problem for binary search trees.
+So, what is _balancing_?
+
+Take a look at the following picture
+
+<img src="/images/ds/binary_search_tree_balance1.png" alt="img" style="width: 100%;"/>
+
+All three are equivalent binary search trees because contain the same elements and all holding bst property.
+But middle one (green) has the smallest height and therefore is more effective.
+High branching factor on all levels keeps insert, remove and search operations in `O(logn)`.
+
+The term **balanced** has a formal definition, which is not helpful at this moment.
+It's enough to assume the tree is balanced when it has the _smallest possible height_.
+
+Let's try to develop an algorithm to rebalance the tree.
+Our goal to transform red unbalanced tree into green balanced.
+
+The first idea come to mind is, get all elements from the current tree and
+put them into new tree in specific order. Sounds reasonable, but still we have no idea about order.
+
+Important observation found when you just add elements to the tree (no removal!).
+
+Relative position of the new added elements are always maintained. That means if you add element `10` into empty bst, it become a root. No subsequent additions could change the root. The same with other nodes, if node `99` become direct right child of node `10`, it always be the direct right child (_until the remove for these nodes called_).
+
+Having that and looking at the perfectly balanced tree, the first node we need to add should be root node. It's `4`. If you take all elements from unbalanced tree and _sort_ them, the node `4` will be exactly at the middle. If `4` becomes root, equal number of elements go both to the left side of the tree and right side. Then apply the same scheme recursively, middle element from the left side will be direct left child of the root and middle element from the right side will be direct right child of the root. 
+
+<img src="/images/ds/binary_search_tree_balance2.png" alt="img" style="width: 80%;"/>
+
+Implementing this algorithm
+
+``` java
+public void rebalance() {
+    if (root == null) return;
+
+    // get all elements, we use bfs to gather elements
+    List<T> elements = new ArrayList<>();
+    Queue<BinaryTreeNode<T>> queue = new Queue<>();
+    queue.offer(root);
+    while (!queue.isEmpty()) {
+        BinaryTreeNode<T> node = queue.poll();
+        elements.add(node.data);
+        if (node.left != null) queue.offer(node.left);
+        if (node.right != null) queue.offer(node.right);
+    }
+
+    // sort elements
+    Collections.sort(elements);
+
+    // do recursive insertion of mid elements
+    BinarySearchTree<T> newBst = new BinarySearchTree<T>();
+    int start = 0;
+    int end = elements.size();
+    addRecursively(newBst, elements, start, end);
+
+    // swap the current root, to new root
+    root = newBst.root;
+}
+
+private void addRecursively(BinarySearchTree<T> bst, List<T> elements, int start, int end) {
+    if (start == end) return; // nothing to add
+    if (start == end - 1) { // one element
+        bst.add(elements.get(start));
+    } else {
+        int midIdx = (start + end) / 2;
+        bst.add(elements.get(midIdx));
+        // run insertion recursively for left and right side of the elements list
+        addRecursively(bst, elements, start, midIdx);
+        addRecursively(bst, elements, midIdx + 1, end);
+    }
+}
+```
+
+Now when you have a way to rebalance a tree, you can apply it after each `insert`, `remove` call, to keep your tree always balanced. But this not very effective. Alternaltively you can run rebalance as soon as tree become _unbalanced enough_. That's trickier.
+
+Anyway, complexity for out rebalancing is high enough (get all elements `O(n)` + sort them `O(n logn)` + adding `n` elements to the tree `O(n logn)`, total is still  `O(n logn)`, kinda slow)
+
+Fortunately, there are other methods of balancing trees which we explore later.
 
 ### Next
 
