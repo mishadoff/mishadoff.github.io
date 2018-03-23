@@ -1,0 +1,184 @@
+---
+layout: post
+title: "Evolville 0.0.1: The Beginning"
+date: 2018-03-19 14:48
+comments: true
+categories: [programming, clojure, graphics, evolville]
+sharing: true
+published: false
+---
+
+Evolville is an imaginary computer world, inhabited by creatures.  
+They live, move, eat, communicate and evolve.  
+
+This is going to be series of posts for simulation, 
+starting from scratch and test various evolution strategies. 
+Our world will evolve, our creatures will evolve, our code will evolve.
+
+Welcome to Evolville!  
+
+<!-- more -->
+
+<style>
+.bordered { border: 1px solid grey; } 
+</style>
+
+# The Beginning
+
+At the beginning there was nothing.  
+No big boom, no hydrogen, no neutrinos, nothing.  
+Only empty _white_ world in [Quil](http://quil.info).
+
+```clojure
+(require '[quil.core :as q])
+
+(q/sketch
+  :title "Evolville 0.0.1"
+  :size [400 400]
+  :setup #(q/background 255))
+```
+
+<img width="400px" src="https://i.imgur.com/Iausyx5.png"/>
+
+# The Gods
+
+The World has _nothing_, but it wasn't _empty_.
+
+**The God of Setup** managed to create world as _empty map_, 
+so in future it can get terrain and be inhabited by creatures.
+Map is the best data structure, you know.
+
+The world was not static either and I'm not talking about space extension. 
+The world already had some fuzzy notion of time and was constantly
+updated by **The God of Update** couple of times per second. 
+
+**The God of Draw** was just sleeping. Why care if the world is empty?
+
+```clojure
+(require '[quil.middleware :as m])
+
+(def world {})
+(def nothing (q/background 255))
+
+(defn setup-world []
+  (nothing)
+  world)
+
+(defn draw-world [world]
+  (nothing))
+
+(defn update-world [world] 
+  world)
+
+(q/sketch
+  :title "Evolville 0.0.1"
+  :size [400 400]
+  :setup setup-world
+  :draw draw-world
+  :update update-world
+  :middleware [m/fun-mode])
+```
+
+Obviosly, nothing happened so far.
+
+<img width="400px" src="https://i.imgur.com/Iausyx5.png"/>
+
+# First Creature
+
+**God of Setup** was not satisfied with inactivity of the **God of Draw**.  
+He created a small creature in the middle of the world. 
+So that **God of Draw** has no free time anymore.
+
+```clojure
+(def world {:creatures [{:loc [200 200] :size 10}]})
+
+(defn draw-world [world]
+  (nothing)
+  (doseq [creature (:creatures world)]
+    (let [{:keys [loc size]} creature
+          [x y] loc]
+      (q/ellipse x y size size))))
+```
+
+<img width="400px" src="https://i.imgur.com/p8OwetD.png"/>
+
+# Movement
+
+Created creature seems dead, and the **God of Setup** gave it speed and direction to move (angle)
+
+```clojure
+(def world {:creatures [{:loc [200 200] :size 10 :speed 1 :dir 45}]})
+```
+
+**God of Update** took this under his responsibility.
+
+```clojure
+(defn move [creature]
+  (let [{:keys [loc speed dir]} creature
+        [x y] loc
+        delta-x (* speed (q/cos (q/radians (- 360 dir))))
+        delta-y (* speed (q/sin (q/radians (- 360 dir))))]
+    (assoc creature :loc [(+ x delta-x) (+ y delta-y)])))
+
+(defn move-creatures [world]
+  (update world :creatures #(mapv move %)))
+
+(defn update-world [world]
+  (-> world
+      (move-creatures)))
+```
+
+<img class="bordered" width="400px" src="https://i.imgur.com/RHEDfxF.gif"/>
+
+Unfortunately, our eyes can't process the infinite world, so **God of Update** made a trick.
+Each time creature appears outside of the visible part of the world,
+it appears on the other side of universe.
+
+Finite, but infinite world.   
+
+```clojure
+(defn- overflow-x [x]
+  (cond (> x (q/width)) (overflow-x (- x (q/width)))
+        (< x 0) (overflow-x (+ x (q/width)))
+        :else x))
+
+(defn- overflow-y [y]
+  (cond (> y (q/height)) (overflow-y (- y (q/height)))
+        (< y 0) (overflow-y (+ y (q/height)))
+        :else y))
+
+(defn move [creature]
+  (let [{:keys [loc speed dir]} creature
+        [x y] loc
+        delta-x (* speed (q/cos (q/radians (- 360 dir))))
+        delta-y (* speed (q/sin (q/radians (- 360 dir))))]
+    (assoc creature :loc [(overflow-x (+ x delta-x)) 
+                          (overflow-y (+ y delta-y))])))
+```
+
+<img class="bordered" width="400px" src="https://i.imgur.com/6xXehTa.gif"/>
+
+# Pack of them
+
+In the next few million years, **Gods** observed how lonely was the single creature in the world. 
+To make it happier, they created `300` random creatures. Each creature was born in random place, 
+have random size, random speed and moves in random direction. 
+
+```clojure
+(defn make-creatures [n]
+  (repeatedly n (fn []
+                  {:loc [(q/random (q/width)) (q/random (q/height))]
+                   :size (q/random 5 15)
+                   :speed (q/random 1 3)
+                   :dir (q/random 360)})))
+
+(def world {:creatures (make-creatures 300)})
+```
+
+<img class="bordered" width="400px" src="https://i.imgur.com/4HvLBBu.gif"/>
+
+Now the world looks like prebiotic soup, where real things may happen. 
+
+To be continued...
+
+[Source](https://github.com/mishadoff/evolville/tree/0.0.1)

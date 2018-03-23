@@ -1,0 +1,310 @@
+---
+layout: post
+title: "Evolville 0.0.2: Life and Death"
+date: 2018-03-22 10:21
+comments: true
+categories: [programming, clojure, graphics, evolville]
+sharing: true
+published: true
+---
+
+Evolville is an imaginary computer world, inhabited by creatures.  
+They live, move, eat, communicate and evolve.  
+
+<!-- more -->
+
+<style>
+.bordered { border: 1px solid grey; } 
+</style>
+
+In previous post we've seen the origins of the World. 
+
+It looks pretty simple: white space inhabited by some creatures.
+All those creatures just moving in random directions causing world look like
+boiling soup. Even it seems that some creatures exist, there is no **life** yet.
+
+God of Setup was responsible for adding creatures to the world initially, 
+but they can't produce new creatures by themselves. Also, there was no **death**, 
+once creature appeared in the world it was living there till the end of time. 
+
+There is an awesome example of simulation game, called 
+[Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
+Life and Death defined with just four simple rules, but even this simplicity cause
+to observe very interesting things, like viruses, stable population and replicants.
+
+We're going to define similar rules for our 2D-world, so let's start.  
+
+# Living Creatures
+
+Our world had only list of _unknown_ creatures so far.
+
+```clojure
+(def world {:creatures [{:loc [200 200] :size 10 :speed 1 :dir 45}
+                        {:loc [100 300] :size 20 :speed 4 :dir 135}
+                        {:loc [350 150] :size 30 :speed 2 :dir 60}]})
+```
+
+This is ok for _soup_, but not ok for _living creatures_.  
+Every creature is unique, so it should have a name. Let's change our structure a bit.
+
+```clojure
+(def world {:creatures {"A" {:loc [200 200] :size 10 :speed 1 :dir 45}
+                        "B" {:loc [100 300] :size 20 :speed 4 :dir 135}
+                        "C" {:loc [350 150] :size 30 :speed 2 :dir 60}}})
+```
+
+Now, we can uniquely identify each creature by name.
+
+# Life
+
+We define **Life** as an ability of creatures to give birth to other creatures.  
+
+One of the simplest form of life is [cell division](https://en.wikipedia.org/wiki/Cell_division). 
+
+Since our world not aware about energy, dna and chemical processes yet, 
+we say, one creature can spawn another creature. 
+Then each of those creatures spawn another creature and so on.
+Exponentially.
+ 
+Spawning takes some time, so let's say our creatures will be spawning once per 3 seconds.
+
+```clojure
+(def spawn-rate 3000) ;; new creature will appear every 3 seconds 
+
+(defn spawn [world [id creature]]
+  (let [now (System/currentTimeMillis)
+        last-spawn-ts (some-> creature :spawn :ts)]
+    (cond
+      ;; initially make creature aware about spawning
+      (nil? last-spawn-ts) (assoc-in world [:creatures id :spawn :ts] now)
+
+      ;; if time has passed creature can spawn
+      (< (+ last-spawn-ts spawn-rate) now)
+      (let [[child-name child-creature] (creature/random world)] ;; generate random creature
+        (-> world
+            (assoc-in [:creatures child-name] child-creature)       ;; add it to the world 
+            (assoc-in [:creatures child-name :loc] (:loc creature)) ;; give it parent location
+            (assoc-in [:creatures id :spawn :ts] now)))             ;; update parent spawn ts
+
+      ;; nothing changes, leave the world as is
+      :else world)))
+```
+
+Our `spawn` function takes the world, and a creature. 
+It could return the unchanged world state, or add creature to it. 
+
+This convention is kinda useful so far, so let's do a utility world function 
+which changes the world by appling function to all creatures.
+
+```clojure
+(defn for-each-creature [world f]
+  (reduce f world (->> world :creatures seq)))
+```
+
+Global spawning for all creatures will look like this
+
+```clojure
+(defn spawn-creatures [world]
+  (w/for-each-creature world spawn))
+```
+
+Meanwhile, **God of Update** hired an assistant **Action** to help him with programming.
+Action refactored world updates and made them structured set of actions.   
+All of our creatures can move and spawn.
+
+```clojure
+
+(defn act [world]
+  (-> world
+      (move-creatures)
+      (spawn-creatures)))
+```
+
+## Spawners
+
+<img class="bordered" width="400px" src="https://i.imgur.com/oBGLRqx.gif"/>
+
+Spawning is the _uncontrolled_ form of Life. 
+No matter what happens, each spawner produce another spawner every three seconds.
+
+As soon as the world starts with at least one spawner, 
+it will be flooded with living creatures soon.
+
+# Death
+
+To make sure the world is balanced, we need death. There are lot of strategies 
+could be implemented to cause death, but let's start with the simplest one - **ageing**.
+
+Opposite to spawning, ageing is an uncontrolled form of death. No matter what spawner is doing,
+it will be dead at some point by ageing. _It's just a matter of time._ 
+
+Since ageing is not controlled, it is not a complex process either. Creatures will lose
+some part of their size on every world update. If size becomes less than zero the creature will 
+die and lost for our world, forever.
+
+```clojure
+(def age-rate 0.05)
+
+(defn age [world [id creature]]
+  (let [newsize (- (get-in creature [:size]) age-rate)]
+    (cond (<= newsize 0)  ;; remove dead creatures
+          (u/dissoc-in world [:creatures id]) 
+          :else (assoc-in world [:creatures id :size] newsize))))
+
+(defn age-creatures [world]
+  (w/for-each-creature world age))
+```
+
+> Note: clojure lacks of `dissoc-in` functions, so we took it from [there](https://github.com/clojure/core.incubator/blob/master/src/main/clojure/clojure/core/incubator.clj#L56)
+
+> Warning: Spawning works in terms of time (e.g every three seconds), 
+> ageing works in terms of frames (e.g every frame creature lose 0.05 in size). 
+> These values are not always related with the same ratio, therefore there is no simple conversion
+> between frames per second and native clock so far. 
+> Accept the fact, that our world is not ideal at all, we will try to solve the issue later.
+
+After adding ageing to our world actions structure, we can observe this picture.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/0SJdJbi.gif"/>
+
+Two things here. Creature spawn another creature periodically and 
+creature lose its size with the time, therefore dying. Those are two opposite processes, so you
+need to work really hard to balance them. If spawn rate is greater than age rate, 
+the world become overpopulated, otherwise all life forms will die.
+
+That's educational for us, but let's move further and develop more complex rules for life and death.   
+
+# Breeding
+
+Similar to the reproduction process, when two parents produce child, we define breeding rule
+in our world. If two creatures collide, they will produce another creature (omit gender for now).
+
+To avoid fast overpopulation, let's say creatures can breed only once per three seconds.
+
+```clojure
+(def breed-delay 3000)
+
+(defn breed [world [id creature]]
+  (cond
+    ;; if creature can not breed leave the world unchanged
+    (not (can-breed? creature)) world
+    :else
+    (let [mate-creature (->> (w/creatures world)
+                             (filter (fn [[_id mate]]
+                                       (and (not= id _id) ;; exclude breeding with itself, lol
+                                            (can-breed? mate)
+                                            (collide? creature mate))))
+                             (first))]
+      (cond (nil? mate-creature) world
+            :else
+            (let [now (System/currentTimeMillis)
+                  [_id mate] mate-creature
+                  [cid child]
+                  [(ec/uuid)
+                   {:loc (mapv #(/ (+ %1 %2) 2.0) (:loc creature) (:loc mate))
+                    :size (random/random 10 20)
+                    :speed (random/random 2 4)#_(/ (+ (:speed creature) (:speed mate)) 2.0)
+                    :dir (/ (+ (:dir creature) (:dir mate)) 2.0)
+                    :breed {:available-at (+ now breed-delay)}}]]
+              (-> world
+                  (assoc-in [:creatures id :breed :available-at] (+ now breed-delay))
+                  (assoc-in [:creatures _id :breed :available-at] (+ now breed-delay))
+                  (assoc-in [:creatures cid] child)))))))
+                  
+(defn breeding [world]
+  (w/for-each-creature world breed))                  
+```
+
+Though this code may look a bit clumsy, it adds breeding to our world.
+
+The logic is following, if some creature can breed 
+and there is at least one another creature who can breed 
+and both those creatures collide, there is new creature born at their location. 
+Newborn creature gets random speed, random size, but **inherits** average direction from the parents.
+Both parents got breed delay as well as new born child can not breed for 3 seconds.
+
+> Example: If parent A moves to the right (angle 0), and parent B moves to the left (angle 180),
+> their child will get direction (0 + 180)/2 = 90 and will go up.
+> It could go down as well, but let's stick to the deterministic average rule.
+
+Direction inheritance is the first example in our world, how parents affect their children.
+
+We disable spawning and promote breeding as a new form of Life. Ageing is still active.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/gdUMBPP.gif"/>
+
+Having such simple rule in _our imaginary world_ we can observe interesting patterns, 
+which are similar to _our real world_. 
+
+## Loneliness
+
+One creature can not breed, so no life appears in the world.  
+Lonely creature will occasionally die because of ageing.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/e4VL6wi.gif"/>
+
+## Forever Alone
+
+Even if there is another creature in the world, but their paths never cross,
+there is no chance for life in the world.
+It's like if you can not meet girl in Virginia, you can't make children with her. 
+This is, probably, why a lot of people like to travel.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/hnUquyR.gif"/>
+
+## Just a bad timing
+
+If two creatures have crossing paths, they can make child theoretically. 
+But bad timing is not on their side. Girl and boy live in the same town and visiting the same places. 
+But they can never meet, as I said bad timing.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/Ak6ElN2.gif"/>
+
+## It's not you, It's me
+
+Sometimes you know the girl, your paths often crosses, you even like it, 
+but haven't enough resources (money, car, house) to make her happy.
+The same here, one of those creature follows another, but has not enough speed to make breeding.
+World will collapse.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/NraeSPf.gif"/>
+
+## King's Family
+
+Considering the previous example, if one creature step back (reduce speed) 
+or push more (gain more speed), the breeding could happen and
+they could produce a lot of children. The only issue is such population 
+will contain very limited creatures. All of them will be moving in one direction,
+inherited from both parents. There is rare chance for other creatures to affect their direction.
+Like king's family. Princess is not for you.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/mcZIcK0.gif"/>
+
+## Rich and Dirty
+
+Another problem with King's Family, it doesn't give a chances for other creatures in the world.
+You can see the Kingdom growing, but some lonely creature slowly dying near the gate.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/yV1mKMM.gif"/>
+
+## Love
+
+Much better when two people have different interests and love each other. 
+For example, two creatures have opposite directions, but move to each other.
+They produce creatures with variable directions, causing more chances 
+to breed with other creatures in the world.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/t2z7nJ8.gif"/>
+
+It may seem first there is the same _limited vertical area_ like in King's Family, 
+but it's only at the beginning. At over 100000 creatures, it will cover almost whole world.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/EUWBUJn.png"/>
+
+The true power of Love!
+
+## Done
+
+To be continued...
+
+[Source](https://github.com/mishadoff/evolville/tree/0.0.2)
