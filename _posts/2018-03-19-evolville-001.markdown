@@ -5,7 +5,7 @@ date: 2018-03-19 14:48
 comments: true
 categories: [programming, clojure, graphics, evolville]
 sharing: true
-published: false
+published: true
 ---
 
 Evolville is an imaginary computer world, inhabited by creatures.  
