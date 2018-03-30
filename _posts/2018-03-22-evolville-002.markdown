@@ -1,11 +1,11 @@
 ---
 layout: post
 title: "Evolville 0.0.2: Life and Death"
-date: 2018-03-22 10:21
+date: 2018-03-30 23:43
 comments: true
 categories: [programming, clojure, graphics, evolville]
 sharing: true
-published: false
+published: true
 ---
 
 Evolville is an imaginary computer world, inhabited by creatures.  
@@ -203,7 +203,7 @@ To avoid fast overpopulation, let's say creatures can breed only once per three 
                   [(ec/uuid)
                    {:loc (mapv #(/ (+ %1 %2) 2.0) (:loc creature) (:loc mate))
                     :size (random/random 10 20)
-                    :speed (random/random 2 4)#_(/ (+ (:speed creature) (:speed mate)) 2.0)
+                    :speed (random/random 2 4)
                     :dir (/ (+ (:dir creature) (:dir mate)) 2.0)
                     :breed {:available-at (+ now breed-delay)}}]]
               (-> world
@@ -303,8 +303,132 @@ but it's only at the beginning. At over 100000 creatures, it will cover almost w
 
 The true power of Love!
 
-## Done
+# Broken Love
 
+Sometimes love can be broken. Consider pair of creatures who moves towards each other.
+They slowly produce a population which is able to survive.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/iU1rRXO.gif"/>
+
+Now we start with the same configuration, but there is a third creature which is breeding faster. 
+This creature blocks left creature from breeding, causing death to overall population. 
+Don't hang with losers.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/MFa4Bmk.gif"/>
+
+# Queen of Ants
+
+You can mimic basic behaviour not only from human population. Ants are awesome
+creatures for evolution algorithms, so let's do something from ants world.
+Consider one big ant (mother of all ants, called queen) which doesn't move, 
+but able to breed with other ants moving towards her. That could be a rise of Ants Empire.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/4azhsfa.gif"/>
+
+There are plenty of other analogies you can see in the world simulated
+using breeding and ageing rules, but let's move forward.   
+
+We've seen uncontrolled and controlled life (spawning, breeding) and uncontrolled death (ageing).
+Even ageing is works for small populations, most of the time simulations end 
+with a lot of creatures in the world. 
+Just because age rate is constant, and growth is not. 
+
+Seems like we need another form of death, let's call it **overpopulation**.
+
+# Overpopulation 
+
+Overpopulation is an effective way to control the population size in the nature. 
+If we have a forest with a lot of wolves and few rabbits, obviously most of the wolves will die,
+because there is not enough resources for them for a living. 
+The same applies for humans and most of the other creatures.
+
+Based on this we define an overpopulation rule for our creatures. 
+**If creature collides with two or more creatures, it dies.**
+
+```clojure
+(defn- overpopulated [world [id creature]]
+  (let [collisions (->> (w/creatures world)
+                        (filter (fn [[_id _creature]]
+                                  (and (not= id _id)
+                                       (c/collide? creature _creature))))
+                        (count))]
+    (if (>= collisions 2)
+      world
+      (assoc-in world [:creatures-new id] creature))))
+      
+(defn overpopulation [world]
+  (let [w (w/for-each-creature world overpopulated)]
+    (-> w
+        (assoc :creatures (or (:creatures-new w) {}))
+        (dissoc :creatures-new))))
+```
+
+Sounds simple, huh? 
+
+Here we just use temporary `:creatures-new` key, to keep track of living creatures, so 
+we don't modify our world before we check all collisions.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/YuvGx5N.gif"/>
+
+Something goes wrong. First, left and right creatures kills the middle one, what is correct.
+But then they produce a child which cause mutual collision for all three and therefore everyone
+dies.
+
+Well, let's assume that child and mate collisions doesn't count. 
+If parent produce a child, child can't kill them. The same for pairs.
+If two creatures breeds, they can't kill each other, we're not Mantis creatures. 
+ 
+Just track who is creature parents and who breeds and then remove them from collisions list.  
+ 
+```clojure
+(defn- parent? [id creature]
+  (some-> creature :parents (get id)))
+
+(defn mate? [w aid bid]
+  (or (= (get-in w [:creatures aid :mate]) bid)
+      (= (get-in w [:creatures bid :mate]) aid)))
+```
+
+<img class="bordered" width="400px" src="https://i.imgur.com/TFKBAXm.gif"/>
+
+Looks like it works.
+
+As a breeding, overpopulation has also some interesting patterns.
+
+We don't discuss all of them, but take a look at one which is really nice.
+
+# Balance
+
+As we have seen, if three creature collides, one of them dies, 
+and the rest two continues breeding for a while. 
+But what if **four** creatures collide at the same time.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/6nvT8MX.gif"/>
+
+Unfortunately, everyone dies. Look at this like a situation, where everyone pushes,
+but no one wins. Like war. Or beer pong. 
+
+If even one creature could relax a bit, everything will be fine.
+Here we reduced speed of top left creature by `0.1`
+
+<img class="bordered" width="400px" src="https://i.imgur.com/Qs0Mvzc.gif"/>
+
+Consider this like life advice, _sometimes you need to relax_.
+
+And finally, let's go back to the _boiling soup_, from the previous post.
+Remember the `300` creatures were moving constantly?
+Now we try to apply to this boiling soup rules of life (breeding) and death (ageing and overpopulation). 
+
+Everything happens in the matter of second, so we added some delay and extra statistics for you.
+
+<img class="bordered" width="400px" src="https://i.imgur.com/2uxijWK.gif"/>
+
+Finally, our world looks more interesting. 
+Some creatures are born, some dies. If breed rate becomes too large, overpopulation fixes that.
+If there are small amount of creatures, much easier for them to breed. 
+
+Life and Death is all about balance.
+ 
 To be continued...
 
 [Source](https://github.com/mishadoff/evolville/tree/0.0.2)
