@@ -37,7 +37,7 @@ to reduce mouse interaction to minimum, while providing a simple way to remember
 I'm a _happy_ user of MacBook Pro 13'' (2017). 
 Really, I find MacOS still the best system for people and devs, but this new keyboard drive me crazy.
 
-<img width="700px" src="https://i.imgur.com/GZLkuCp.png">
+<img width="700px" src="https://i.imgur.com/GZLkuCpl.png">
 
 Ironically, `Escape` button escaped to virtual world, so you can't get tactile feedback from it.
 Apple provided a discount, so you got four arrows in the ~~price~~ place of three.
