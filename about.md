@@ -12,17 +12,23 @@ footer: true
 
 ```bash
 % whoami
-mishadoff
 ```
 
 Hi, my name is Mykhailo Kozik or just Misha.
 
-I am java software developer with passion to functional programming, artificial intelligence, machine learning, natural language processing and puzzles.
+I am a software engineer with 12+ years of experience, who builds reliable software. 
+I like to solve problems, both technical and business. 
+Proponent of simplicity. Progress over perfection.
 
-I like good music, fiction books, vulgar jokes and stupid pictures. Check more on my social accounts.
+Passionate about functional programming, artificial intelligence, natural language processing and puzzles.
 
-* [Facebook](https://www.facebook.com/mishadoff)
-* [Twitter](https://twitter.com/mishadoff)
+I like good music, fiction books, video games and stupid pictures. 
+Occasionally do paintings and writings.  
+Check more on my social accounts.
+
 * [Github](https://github.com/mishadoff)
 * [LinkedIn](https://www.linkedin.com/pub/mykhailo-kozik/19/6b6/b25)
+* [Twitter](https://twitter.com/mishadoff)
+* [Facebook](https://www.facebook.com/mishadoff)
 * [StackOverflow](http://stackoverflow.com/users/555553/mishadoff)
+* [Behance](https://www.behance.net/mishadoff)

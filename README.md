@@ -1,7 +1,16 @@
 # mishadoff thoughts
 
-Personal blog about programming, math and life
+Personal blog about programming, math and life.
 
-* Author: **Misha Kozik** (mishadoff)
-* Design: **Mark Reid**
-* Engine: **Jekyll** (enhanced by [Jekyll Bootstrap](http://jekyllbootstrap.com))
+# Usage
+
+```
+// new post
+rake post title="new post"
+
+// local preview
+jekyll serve
+
+// publish
+// just commit changes to md files
+```
