@@ -108,7 +108,7 @@ Like this.
 
 This is a good starting point, because at the end data will look the same.
 
-Each `1` or `0` is called **bit**.  
+Each `1` or `0` is called a **bit**.  
 So, `1` is a bit, `0` is a bit, `10` are two bits.
 
 People are smart, so they took group of eight bits and called them a **byte**. 
