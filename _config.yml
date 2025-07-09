@@ -28,6 +28,7 @@ author :
 excerpt: true #
 excerpt_separator: "<!-- more -->"
 
+
 #rss_categories: ["clojure", "java", "digest"]
 
 # The production_url is only used when full-domain names are needed
@@ -42,11 +43,11 @@ excerpt_separator: "<!-- more -->"
 short_url : mishadoff.com
 production_url : http://mishadoff.com
 
-
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #
 JB :
   version : 0.3.0
+  ga4_tracking_id : G-VMRSG4BMKE # Works only for MARK REID THEME
 
   # All links will be namespaced by BASE_PATH if defined.
   # Links in your website should always be prefixed with {{BASE_PATH}}
@@ -98,14 +99,19 @@ JB :
     provider : disqus
     disqus :
       short_name : mits
+  
   # Settings for analytics helper
   # Set 'provider' to the analytics provider you want to use.
   # Set 'provider' to false to turn analytics off globally.
   #        
+  # analytics :
+  #   provider : google 
+  #   google : 
+  #       tracking_id : 'G-VMRSG4BMKE'
   analytics :
     provider : google 
     google : 
-        tracking_id : 'G-VMRSG4BMKE'
+      tracking_id : 'G-VMRSG4BMKE'
 
   # Settings for sharing helper. 
   # Sharing is for things like tweet, plusone, like, reddit buttons etc.
