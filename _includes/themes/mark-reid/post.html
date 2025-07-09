@@ -2,6 +2,7 @@
 	
   <h1>{{ page.title }}</h1>
 
+  {% capture content %}{% include plantuml.liquid html=content %}{% endcapture %}
   {{ content }}
 
   <ul class="tag_box inline">

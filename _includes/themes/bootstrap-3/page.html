@@ -4,6 +4,8 @@
 
 <div class="row">
   <div class="col-xs-12">
+
+    {% capture content %}{% include plantuml.liquid html=content %}{% endcapture %}
     {{ content }}
   </div>
 </div>

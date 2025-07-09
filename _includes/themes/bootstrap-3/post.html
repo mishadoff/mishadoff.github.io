@@ -8,6 +8,7 @@
       <span>{{ page.date | date_to_long_string }}</span>
     </div>
     <div class="content">
+      {% capture content %}{% include plantuml.liquid html=content %}{% endcapture %}
       {{ content }}
     </div>
 
