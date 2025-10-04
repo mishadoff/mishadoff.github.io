@@ -19,7 +19,7 @@ footer: true
 
 # Writings
 
-I do occasional writings in Ukrainian, which published here [t.me/bdzhilka](t.me/bdzhilka)
+I do occasional writings in Ukrainian, which published here [https://t.me/bdzhilka](https://t.me/bdzhilka)
 
 ## Супермаркет Бджілка
 
