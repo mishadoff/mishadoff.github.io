@@ -12,4 +12,7 @@ footer: true
 
 Chirp & Roar is an educational app for children that lets users explore animal sounds and fun facts.
 
-TODO: link to appstore
+![](/images/chirp_roar/screenshot1.png)
+
+
+- [Chirp & Roar Privacy Policy](/chirp_roar/privacy_policy)

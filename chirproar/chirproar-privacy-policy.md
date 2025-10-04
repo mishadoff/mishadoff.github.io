@@ -10,11 +10,11 @@ footer: true
 ---
 {% include JB/setup %}
 
-Chirp & Roar: Privacy Policy
+# Chirp & Roar: Privacy Policy
 
 Last updated: October 2025
 
-Chirp & Roar is an educational app for children that lets users explore animal sounds and fun facts.
+> Chirp & Roar is an educational app for children that lets users explore animal sounds and fun facts.
 
 We do not collect, store, or share any personal information.
 The app does not require an internet connection and does not include ads, analytics, or tracking tools.
