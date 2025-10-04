@@ -14,6 +14,8 @@ Chirp & Roar is an educational app for children that lets users explore animal s
 
 ![](/images/chirp_roar/screenshot1.png){: width="250" }
 
+It was developed as educational project with my son Nestor.
+
 It is an interactive collection of 100+ animals with:
 
 - Realistic photos
