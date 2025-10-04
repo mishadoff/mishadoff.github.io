@@ -10,18 +10,18 @@ footer: true
 ---
 {% include JB/setup %}
 
-# Software Projects 
+## Software Projects 
 
-## Chirp & Roar (Щебечи та Ричи)
+### Chirp & Roar (Щебечи та Ричи)
 
 - iOS app for kids with animal sounds
 - [Chirp & Roar](/chirproar/chirproar-about.md)
 
-# Writings
+## Writings
 
 I do occasional fiction writings in Ukrainian, which published here [https://t.me/bdzheelka](https://t.me/bdzheelka)
 
-## Супермаркет Бджілка
+### Супермаркет Бджілка
 
 ![](/images/writings/bdzhilka.jpg){: width="250" }
 
